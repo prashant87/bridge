@@ -1,0 +1,7 @@
+EESchema-DOCLIB  Version 2.0
+#
+$CMP stepper_conn
+D Stepper motor connector 01x04
+$ENDCMP
+#
+#End Doc Library
