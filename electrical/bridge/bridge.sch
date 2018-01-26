@@ -34,7 +34,8 @@ LIBS:valves
 LIBS:crystal-4pin
 LIBS:my_comps
 LIBS:stm32f103cbt6
-LIBS:lcu03-cache
+LIBS:stm32f105r8t6
+LIBS:bridge-cache
 EELAYER 25 0
 EELAYER END
 $Descr A1 33110 23386
