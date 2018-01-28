@@ -35,6 +35,7 @@ LIBS:crystal-4pin
 LIBS:my_comps
 LIBS:stm32f103cbt6
 LIBS:stm32f105r8t6
+LIBS:stm32f405rgt6
 LIBS:bridge-cache
 EELAYER 25 0
 EELAYER END

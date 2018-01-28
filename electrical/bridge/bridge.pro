@@ -1,4 +1,4 @@
-update=Thu 25 Jan 2018 10:55:06 PM PST
+update=Fri 26 Jan 2018 11:27:43 PM PST
 version=1
 last_client=kicad
 [pcbnew]
@@ -65,3 +65,4 @@ LibName33=/home/z80/projects/bridge.git/electrical/components/crystal-4pin
 LibName34=/home/z80/projects/bridge.git/electrical/components/my_comps
 LibName35=/home/z80/projects/bridge.git/electrical/components/stm32f103cbt6
 LibName36=stm32f105r8t6
+LibName37=stm32f405rgt6
