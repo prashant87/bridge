@@ -126,7 +126,7 @@ void StartDefaultTask(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-		if ( processHost( &mouseHID2 ) )
+		if ( taskHostProcess( &mouseHID2 ) )
 		{
 			/*
 			  mouseHID.buttons = 0;

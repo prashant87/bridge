@@ -49,13 +49,9 @@
 #include "main.h"
 #include "stm32f4xx_hal.h"
 #include "cmsis_os.h"
-#include "usb_device.h"
-#include "usb_host.h"
-#include "gpio.h"
 
 /* USER CODE BEGIN Includes */
-#include "usb_host.h"
-#include "usbh_hid_mouse.h"
+#include "task_led.h"
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
@@ -83,10 +79,6 @@ void MX_FREERTOS_Init(void);
   *
   * @retval None
   */
-
-extern USBH_HandleTypeDef hUsbHostHS;
-static ApplicationTypeDef Appli_state = APPLICATION_IDLE;
-static void myUserProcess(USBH_HandleTypeDef *phost, uint8_t id);
 
 int main(void)
 {
@@ -118,65 +110,22 @@ int main(void)
   /* Call init function for freertos objects (in freertos.c) */
   //MX_FREERTOS_Init();
 
+  taskLedInit();
   /* Start scheduler */
-  //osKernelStart();
+  osKernelStart();
   
   /* We should never get here as control is now taken by the scheduler */
 
   /* Infinite loop */
-  USBH_Init(&hUsbHostHS, myUserProcess, HOST_HS);
-  USBH_RegisterClass(&hUsbHostHS, USBH_HID_CLASS);
-  USBH_Start(&hUsbHostHS);
-
-  /* USER CODE BEGIN USB_HOST_Init_PostTreatment */
-  //osDelay( 200 );
-  //USBH_ReEnumerate( &hUsbHostHS );
-  /* USER CODE BEGIN WHILE */
-  HID_MOUSE_Info_TypeDef * mInfo;
-  HID_TypeTypeDef type;
   while (1)
   {
 	  /* USER CODE END WHILE */
-	  USBH_Process( &hUsbHostHS );
-	  if ( Appli_state == APPLICATION_READY )
-	  {
-		  type = USBH_HID_GetDeviceType( &hUsbHostHS );
-		  if ( type == HID_MOUSE )
-		  {
-			  mInfo = USBH_HID_GetMouseInfo( &hUsbHostHS );
-		  }
-	  }
 	  /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
 
 }
 
-static void myUserProcess(USBH_HandleTypeDef *phost, uint8_t id)
-{
-  /* USER CODE BEGIN CALL_BACK_1 */
-  switch(id)
-  {
-  case HOST_USER_SELECT_CONFIGURATION:
-  break;
-
-  case HOST_USER_DISCONNECTION:
-  Appli_state = APPLICATION_DISCONNECT;
-  break;
-
-  case HOST_USER_CLASS_ACTIVE:
-  Appli_state = APPLICATION_READY;
-  break;
-
-  case HOST_USER_CONNECTION:
-  Appli_state = APPLICATION_START;
-  break;
-
-  default:
-  break;
-  }
-  /* USER CODE END CALL_BACK_1 */
-}
 
 
 /**

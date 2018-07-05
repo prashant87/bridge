@@ -8,7 +8,11 @@
 #include "task_led.h"
 #include "cmsis_os.h"
 #include "gpio.h"
+
+#include "usbd_core.h"
+#include "usbd_desc.h"
 #include "usbd_hid.h"
+
 #include "task_host.h"
 
 #define LED_PORT GPIOA
@@ -22,6 +26,14 @@ struct mouseHID_t mouseHID;
 // bytes.  For example, if each stack item is 32-bits, and this is set to 100,
 // then 400 bytes (100 * 32-bits) will be allocated.
 #define LED_STACK_SIZE 200
+
+static USBD_HandleTypeDef hUsbDeviceFS;
+static void taskDeviceInit( void )
+{
+	USBD_Init( &hUsbDeviceFS, &FS_Desc, DEVICE_FS );
+	USBD_RegisterClass( &hUsbDeviceFS, &USBD_HID );
+	USBD_Start( &hUsbDeviceFS );
+}
 
 // Function that implements the task being created.
 static void vTaskLed( void * pvParameters )
@@ -47,6 +59,8 @@ static void vTaskUsbIo( void * p )
 	mouseHID.x = 1;
 	mouseHID.y = 0;
 	mouseHID.wheel = 0;
+
+	taskDeviceInit();
 
 	for ( ;; )
 	{

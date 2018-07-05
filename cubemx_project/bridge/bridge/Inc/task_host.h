@@ -6,7 +6,8 @@
 
 struct mouseHID_t;
 
-uint8_t processHost( struct mouseHID_t * m );
+void    taskHostInit( void );
+uint8_t taskHostProcess( struct mouseHID_t * m );
 
 
 
