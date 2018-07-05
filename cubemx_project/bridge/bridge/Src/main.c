@@ -107,14 +107,12 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-
   /* USER CODE BEGIN 2 */
+  taskLedInit();
   /* USER CODE END 2 */
 
   /* Call init function for freertos objects (in freertos.c) */
   MX_FREERTOS_Init();
-
-  taskLedInit();
 
   /* Start scheduler */
   osKernelStart();
