@@ -54,8 +54,6 @@
 #include "gpio.h"
 
 /* USER CODE BEGIN Includes */
-#include "task_led.h"
-
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
@@ -108,7 +106,6 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
-  taskLedInit();
   /* USER CODE END 2 */
 
   /* Call init function for freertos objects (in freertos.c) */

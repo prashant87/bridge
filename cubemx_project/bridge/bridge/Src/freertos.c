@@ -50,8 +50,10 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include "cmsis_os.h"
-
-/* USER CODE BEGIN Includes */     
+/* USER CODE BEGIN Includes */
+#include "usbd_hid.h"
+#include "task_led.h"
+#include "task_host.h"
 
 /* USER CODE END Includes */
 
@@ -109,6 +111,7 @@ void MX_FREERTOS_Init(void) {
 }
 
 /* StartDefaultTask function */
+struct mouseHID_t mouseHID2;
 void StartDefaultTask(void const * argument)
 {
   /* init code for USB_DEVICE */
@@ -118,10 +121,21 @@ void StartDefaultTask(void const * argument)
   MX_USB_HOST_Init();
 
   /* USER CODE BEGIN StartDefaultTask */
+  taskLedInit();
   /* Infinite loop */
   for(;;)
   {
-    osDelay(1);
+		if ( processHost( &mouseHID2 ) )
+		{
+			/*
+			  mouseHID.buttons = 0;
+			  mouseHID.x = 1;
+			  mouseHID.y = 0;
+			  mouseHID.wheel = 0;
+			USBD_HID_SendReport(&hUsbDeviceFS, (uint8_t *)&mouseHID, sizeof(struct mouseHID_t));
+			*/
+		}
+		osDelay(1);
   }
   /* USER CODE END StartDefaultTask */
 }
