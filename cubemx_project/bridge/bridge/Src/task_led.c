@@ -56,7 +56,7 @@ extern USBD_HandleTypeDef hUsbDeviceFS;
 static void vTaskUsbIo( void * p )
 {
 	mouseHID.buttons = 0;
-	mouseHID.x = 1;
+	mouseHID.x = 0;
 	mouseHID.y = 0;
 	mouseHID.wheel = 0;
 

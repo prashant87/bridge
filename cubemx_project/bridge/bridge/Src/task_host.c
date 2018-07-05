@@ -28,7 +28,7 @@ uint8_t taskHostProcess( struct mouseHID_t * m )
 			mInfo = USBH_HID_GetMouseInfo( &hUsbHostHS );
 			if ( !mInfo )
 				return 0;
-			m->x = (*(int8_t *)&(mInfo->x)) + 1;
+			m->x = (*(int8_t *)&(mInfo->x));
 			m->y = (*(int8_t *)&(mInfo->y));
 			m->buttons = ( (mInfo->buttons[0]) ? 1 : 0 ) +
 					     ( (mInfo->buttons[1]) ? 2 : 0 ) +
