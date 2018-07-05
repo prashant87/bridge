@@ -120,15 +120,15 @@
 #define USBH_DEBUG_LEVEL      0
  
 /*----------   -----------*/
-#define USBH_USE_OS      1
+#define USBH_USE_OS      0
  
  
  
 
 /****************************************/
 /* #define for FS and HS identification */
-#define HOST_HS 		0
-#define HOST_FS 		1
+#define HOST_HS 		1
+#define HOST_FS 		0
 
 #if (USBH_USE_OS == 1)
   #include "cmsis_os.h"
