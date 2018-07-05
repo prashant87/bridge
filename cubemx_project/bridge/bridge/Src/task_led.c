@@ -60,11 +60,12 @@ static void vTaskUsbIo( void * p )
 	mouseHID.y = 0;
 	mouseHID.wheel = 0;
 
+	taskHostInit();
 	taskDeviceInit();
 
 	for ( ;; )
 	{
-		//if ( processHost( &mouseHID ) )
+		if ( taskHostProcess( &mouseHID ) )
 		{
 			USBD_HID_SendReport(&hUsbDeviceFS, (uint8_t *)&mouseHID, sizeof(struct mouseHID_t));
 		}
