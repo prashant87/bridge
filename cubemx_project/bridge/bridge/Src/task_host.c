@@ -30,9 +30,13 @@ uint8_t taskHostProcess( struct mouseHID_t * m )
 				return 0;
 			m->x = (*(int8_t *)&(mInfo->x)) + 1;
 			m->y = (*(int8_t *)&(mInfo->y));
+			m->buttons = ( (mInfo->buttons[0]) ? 1 : 0 ) +
+					     ( (mInfo->buttons[1]) ? 2 : 0 ) +
+						 ( (mInfo->buttons[2]) ? 4 : 0 );
+			return 1;
 		}
 	}
-	return 1;
+	return 0;
 }
 
 static void myUserProcess( USBH_HandleTypeDef *phost, uint8_t id )
