@@ -64,12 +64,11 @@ static void vTaskUsbIo( void * p )
 }
 
 // Function that creates a task.
+osThreadDef(ledTask, vTaskLed, osPriorityAboveNormal, 0, 128);
+osThreadDef(usbDeviceTask, vTaskUsbIo, osPriorityAboveNormal, 0, 512);
 void taskLedInit( void )
 {
-	osThreadDef(ledTask, vTaskLed, osPriorityAboveNormal, 0, 128);
 	osThreadCreate(osThread(ledTask), NULL);
-
-	osThreadDef(usbDeviceTask, vTaskUsbIo, osPriorityAboveNormal, 0, 128);
 	osThreadCreate(osThread(usbDeviceTask), NULL);
 }
 
