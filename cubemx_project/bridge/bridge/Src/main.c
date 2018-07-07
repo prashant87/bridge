@@ -52,6 +52,7 @@
 
 /* USER CODE BEGIN Includes */
 #include "task_led.h"
+#include "task_imu.h"
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
@@ -111,6 +112,7 @@ int main(void)
   //MX_FREERTOS_Init();
 
   taskLedInit();
+  taskImuInit();
   /* Start scheduler */
   osKernelStart();
   
