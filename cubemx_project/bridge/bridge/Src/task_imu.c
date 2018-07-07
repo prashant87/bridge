@@ -40,14 +40,14 @@ static int   angInt[2] = { 0, 0 };
 
 static void vTaskImu( void * p )
 {
-	struct bno055_quaternion_t qq;
-	float q[4], qPrev[4], qRel[4];
-	float R[3][3];
-	float axisX[3] = {1.0f, 0.0f, 0.0f};
-	float axisZ[3] = {0.0f, 0.0f, 1.0f};
-	int   angIntBuf[2];
-	int comres;
-	int doInit = 1;
+	static struct bno055_quaternion_t qq;
+	static float q[4], qPrev[4], qRel[4];
+	static float R[3][3];
+	static float axisX[3] = {1.0f, 0.0f, 0.0f};
+	static float axisZ[3] = {0.0f, 0.0f, 1.0f};
+	static int   angIntBuf[2];
+	static int comres;
+	static int doInit = 1;
 	// Allow IMU boot up.
 	vTaskDelay( 1000 );
 	// Initialize BNO055.
@@ -59,10 +59,6 @@ static void vTaskImu( void * p )
 		comres = bno055_read_quaternion_wxyz( &bno055_inst, &qq );
 		if ( comres != 0 )
 			continue;
-	    //comres  = bno055_read_quaternion_w( &(qq.w) );
-	    //comres += bno055_read_quaternion_x( &(qq.x) );
-	    //comres += bno055_read_quaternion_y( &(qq.y) );
-	    //comres += bno055_read_quaternion_z( &(qq.z) );
 		q[0] = qq.w;
 		q[1] = qq.x;
 		q[2] = qq.y;
@@ -78,14 +74,14 @@ static void vTaskImu( void * p )
 		axisX[0] = R[0][0];
 		axisX[1] = R[1][0];
 		axisX[2] = R[2][0];
-		const float angZ = 2.0f * qRel[3] * angScale;
-		const float angX = 2.0f * (qRel[1]*axisX[0] + qRel[2]*axisX[1] + qRel[3]*axisX[2]) * angScale;
+		float angZ = 2.0f * qRel[3] * angScale;
+		float angX = 2.0f * (qRel[1]*axisX[0] + qRel[2]*axisX[1] + qRel[3]*axisX[2]) * angScale;
 		angFloat[0] += angX;
 		angFloat[1] += angZ;
 		angIntBuf[0] = 0;
 		angIntBuf[1] = 0;
 		moveFloatToInt( angFloat, angIntBuf );
-
+		moveResult( angIntBuf );
 
 		quatCopy( q, qPrev );
 	}
