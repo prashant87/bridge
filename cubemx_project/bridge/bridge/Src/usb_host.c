@@ -108,8 +108,8 @@ void MX_USB_HOST_Init(void)
   USBH_Start(&hUsbHostHS);
 
   /* USER CODE BEGIN USB_HOST_Init_PostTreatment */
-  osDelay( 200 );
-  USBH_ReEnumerate( &hUsbHostHS );
+  //osDelay( 200 );
+  //USBH_ReEnumerate( &hUsbHostHS );
   /* USER CODE END USB_HOST_Init_PostTreatment */
 }
 

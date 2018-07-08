@@ -12,6 +12,8 @@ static struct bno055_t bno055_inst;
 
 static void vTaskImu( void * p );
 
+static osMutexDef_t mutex;
+static osMutexId    mutexId;
 osThreadDef(imuTask, vTaskImu, osPriorityAboveNormal, 0, 512);
 void taskImuInit( void )
 {
@@ -20,6 +22,7 @@ void taskImuInit( void )
 	bno055_inst.delay_msec = bno055_delay;
 	bno055_inst.dev_addr   = BNO055_I2C_ADDR1 << 1;
 
+	mutexId = osMutexCreate( &mutex );
 	// Initialize I2C peripherial.
 	MX_I2C2_Init();
 	// Create reading thread.
@@ -34,9 +37,46 @@ static void quatRel( float * qa, float * qb, float * qr );
 static void moveFloatToInt( float * fa, int * ia );
 static void moveResult( int * adj );
 
-static float angScale = 16.0;
+static float angScale = 700.0;
 static float angFloat[2] = { 0.0f, 0.0f };
 static int   angInt[2] = { 0, 0 };
+
+void adjustMouse( int8_t * x, int8_t * y )
+{
+	osMutexWait( mutexId, osWaitForever );
+		if ( angInt[0] > 0 )
+		{
+			int max_dx = 127 - (*x);
+			int dx = ( angInt[0] < max_dx ) ? angInt[0] : max_dx;
+			*x += dx;
+			angInt[0] -= dx;
+		}
+		else
+		{
+			int min_dx = -127 - (*x);
+			int dx = (angInt[0] > min_dx) ? angInt[0] : min_dx;
+			*x += dx;
+			angInt[0] -= dx;
+		}
+
+		if ( angInt[1] > 0 )
+		{
+			int max_dy = 127 - (*y);
+			int dy = ( angInt[1] < max_dy ) ? angInt[1] : max_dy;
+			*y += dy;
+			angInt[1] -= dy;
+		}
+		else
+		{
+			int min_dy = -127 - (*y);
+			int dy = (angInt[1] > min_dy) ? angInt[1] : min_dy;
+			*y += dy;
+			angInt[1] -= dy;
+		}
+
+	osMutexRelease( mutexId );
+}
+
 
 static void vTaskImu( void * p )
 {
@@ -44,7 +84,6 @@ static void vTaskImu( void * p )
 	static float q[4], qPrev[4], qRel[4];
 	static float R[3][3];
 	static float axisX[3] = {1.0f, 0.0f, 0.0f};
-	static float axisZ[3] = {0.0f, 0.0f, 1.0f};
 	static int   angIntBuf[2];
 	static int comres;
 	static int doInit = 1;
