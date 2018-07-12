@@ -5,7 +5,7 @@
 #include <stdio.h>
 
 void taskImuInit( void );
-void adjustMouse( int8_t * x, int8_t * y );
+uint8_t adjustMouse( int8_t * x, int8_t * y );
 
 
 

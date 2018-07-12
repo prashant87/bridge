@@ -39,17 +39,19 @@ static void quatRel( float * qa, float * qb, float * qr );
 static void moveFloatToInt( float * fa, int * ia );
 static void moveResult( int * adj );
 
-static float angScale = 700.0;
+static float angScale = 1600.0;
 static float angFloat[2] = { 0.0f, 0.0f };
 static int   angInt[2] = { 0, 0 };
 
-void adjustMouse( int8_t * x, int8_t * y )
+uint8_t adjustMouse( int8_t * x, int8_t * y )
 {
+	uint8_t res = 0;
 	osMutexWait( mutexId, osWaitForever );
 		if ( angInt[0] > 0 )
 		{
 			int max_dx = 127 - (*x);
 			int dx = ( angInt[0] < max_dx ) ? angInt[0] : max_dx;
+			res = res + ( (dx != 0) ? 1 : 0 );
 			*x += dx;
 			angInt[0] -= dx;
 		}
@@ -57,6 +59,7 @@ void adjustMouse( int8_t * x, int8_t * y )
 		{
 			int min_dx = -127 - (*x);
 			int dx = (angInt[0] > min_dx) ? angInt[0] : min_dx;
+			res = res + ( (dx != 0) ? 1 : 0 );
 			*x += dx;
 			angInt[0] -= dx;
 		}
@@ -65,6 +68,7 @@ void adjustMouse( int8_t * x, int8_t * y )
 		{
 			int max_dy = 127 - (*y);
 			int dy = ( angInt[1] < max_dy ) ? angInt[1] : max_dy;
+			res = res + ( (dy != 0) ? 1 : 0 );
 			*y += dy;
 			angInt[1] -= dy;
 		}
@@ -72,11 +76,13 @@ void adjustMouse( int8_t * x, int8_t * y )
 		{
 			int min_dy = -127 - (*y);
 			int dy = (angInt[1] > min_dy) ? angInt[1] : min_dy;
+			res = res + ( (dy != 0) ? 1 : 0 );
 			*y += dy;
 			angInt[1] -= dy;
 		}
-
 	osMutexRelease( mutexId );
+
+	return res;
 }
 
 

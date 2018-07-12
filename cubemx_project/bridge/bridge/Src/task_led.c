@@ -14,12 +14,14 @@
 #include "usbd_hid.h"
 
 #include "task_host.h"
+#include "task_imu.h"
 
 #define LED_PORT GPIOA
 #define LED_0    GPIO_PIN_6
 #define LED_1    GPIO_PIN_7
 
 struct mouseHID_t mouseHID;
+struct mouseHID_t imuHID;
 
 // Dimensions the buffer that the task being created will use as its stack.
 // NOTE:  This is the number of words the stack will hold, not the number of
@@ -57,6 +59,10 @@ static void vTaskUsbIo( void * p )
 	mouseHID.x = 0;
 	mouseHID.y = 0;
 	mouseHID.wheel = 0;
+	imuHID.buttons = 0;
+	imuHID.x = 0;
+	imuHID.y = 0;
+	imuHID.wheel = 0;
 
 	taskHostInit();
 	taskDeviceInit();
@@ -65,9 +71,19 @@ static void vTaskUsbIo( void * p )
 	{
 		if ( taskHostProcess( &mouseHID ) )
 		{
+			//adjustMouse( &(mouseHID.x), &(mouseHID.y) );
 			USBD_HID_SendReport(&hUsbDeviceFS, (uint8_t *)&mouseHID, sizeof(struct mouseHID_t));
+			//osDelay( 8 );
+			//mouseHID.x = mouseHID.y = 0;
+			osDelay( 2 );
 		}
-		//osDelay( 1 );
+		imuHID.x = 0;
+		imuHID.y = 0;
+		if ( adjustMouse( &(imuHID.x), &(imuHID.y) ) )
+		{
+			USBD_HID_SendReport(&hUsbDeviceFS, (uint8_t *)&imuHID, sizeof(struct mouseHID_t));
+			osDelay( 2 );
+		}
 	}
 	//for (;;)
 	//{
