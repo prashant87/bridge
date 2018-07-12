@@ -94,6 +94,7 @@ static void vTaskImu( void * p )
 	// read data in infinite loop.
 	for (;;)
 	{
+		toggleLed( 2 );
 		vTaskDelay( 10 );
 		comres = bno055_read_quaternion_wxyz( &bno055_inst, &qq );
 		if ( comres != 0 )
@@ -109,14 +110,14 @@ static void vTaskImu( void * p )
 			quatCopy( q, qPrev );
 		}
 		quatRel( qPrev, q, qRel );
-		quat2Mat( qPrev, R );
-		axisX[0] = R[0][0];
-		axisX[1] = R[1][0];
-		axisX[2] = R[2][0];
-		float angZ = 2.0f * qRel[3] * angScale;
-		float angX = 2.0f * (qRel[1]*axisX[0] + qRel[2]*axisX[1] + qRel[3]*axisX[2]) * angScale;
-		angFloat[0] += angX;
-		angFloat[1] += angZ;
+		//quat2Mat( qPrev, R );
+		axisX[0] = 1.0; //R[0][0];
+		axisX[1] = 0.0; //R[1][0];
+		axisX[2] = 0.0; //R[2][0];
+		float angZ = -2.0f * qRel[3] * angScale;
+		float angX = -2.0f * (qRel[1]*axisX[0] + qRel[2]*axisX[1] + qRel[3]*axisX[2]) * angScale;
+		angFloat[0] += angZ;
+		angFloat[1] += angX;
 		angIntBuf[0] = 0;
 		angIntBuf[1] = 0;
 		moveFloatToInt( angFloat, angIntBuf );
@@ -128,8 +129,14 @@ static void vTaskImu( void * p )
 
 static void quatNormalize( float * q )
 {
-	float l = q[0]*q[0] + q[1]*q[1] + q[2]*q[2];
+	/*float l = q[0]*q[0] + q[1]*q[1] + q[2]*q[2];
 	l = 1.0 / sqrtn( l );
+	q[0] *= l;
+	q[1] *= l;
+	q[2] *= l;
+	q[3] *= l;*/
+
+	static const float l = 1.0 / 16384.0;
 	q[0] *= l;
 	q[1] *= l;
 	q[2] *= l;
@@ -208,20 +215,20 @@ static void moveFloatToInt( float * fa, int * ia )
 {
 	for ( int i=0; i<2; i++ )
 	{
-		if ( fa[0] >= 1.0f )
+		if ( fa[i] >= 1.0f )
 		{
-			while ( fa[0] >= 1.0f )
+			while ( fa[i] >= 1.0f )
 			{
-				fa[0] -= 1.0f;
-				ia[0]   += 1;
+				fa[i] -= 1.0f;
+				ia[i]   += 1;
 			}
 		}
-		else if ( fa[0] <= -1.0f )
+		else if ( fa[i] <= -1.0f )
 		{
-			while ( fa[0] <= -1.0f )
+			while ( fa[i] <= -1.0f )
 			{
-				fa[0] += 1.0f;
-				ia[0]   -= 1;
+				fa[i] += 1.0f;
+				ia[i]   -= 1;
 			}
 		}
 	}
@@ -229,8 +236,10 @@ static void moveFloatToInt( float * fa, int * ia )
 
 static void moveResult( int * adj )
 {
-	angInt[0] += adj[0];
-	angInt[1] += adj[1];
+	osMutexWait( mutexId, osWaitForever );
+		angInt[0] += adj[0];
+		angInt[1] += adj[1];
+	osMutexRelease( mutexId );
 }
 
 static void bno055Init( void )

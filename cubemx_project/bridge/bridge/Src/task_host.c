@@ -33,6 +33,7 @@ uint8_t taskHostProcess( struct mouseHID_t * m )
 			m->buttons = ( (mInfo->buttons[0]) ? 1 : 0 ) +
 					     ( (mInfo->buttons[1]) ? 2 : 0 ) +
 						 ( (mInfo->buttons[2]) ? 4 : 0 );
+			adjustMouse( &(m->x), &(m->y) );
 			return 1;
 		}
 	}

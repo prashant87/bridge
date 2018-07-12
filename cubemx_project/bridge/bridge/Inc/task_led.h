@@ -11,6 +11,7 @@
 #include <stdio.h>
 
 void taskLedInit(void);
+void toggleLed( int mask );
 
 // HID Mouse
 struct mouseHID_t {

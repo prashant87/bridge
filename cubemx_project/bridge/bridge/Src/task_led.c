@@ -45,10 +45,8 @@ static void vTaskLed( void * pvParameters )
 	for( ;; )
 	{
 		// Task code goes here.
-		HAL_GPIO_WritePin( LED_PORT, LED_0 | LED_1, GPIO_PIN_SET );
-		osDelay( 500 );
-		HAL_GPIO_WritePin( LED_PORT, LED_0 | LED_1, GPIO_PIN_RESET );
-		osDelay( 500 );
+		toggleLed( 1 );
+		osDelay( 100 );
 	}
 }
 
@@ -86,4 +84,27 @@ void taskLedInit( void )
 	osThreadCreate(osThread(ledTask), NULL);
 	osThreadCreate(osThread(usbDeviceTask), NULL);
 }
+
+
+
+static unsigned char leds[2] = {0, 0};
+void toggleLed( int mask )
+{
+	if ( mask & 1 )
+		leds[0] = ( leds[0] ) ? 0 : 1;
+	if ( mask & 2 )
+		leds[1] = ( leds[1] ) ? 0 : 1;
+	if ( leds[0] )
+		HAL_GPIO_WritePin( LED_PORT, LED_0, GPIO_PIN_SET );
+	else
+		HAL_GPIO_WritePin( LED_PORT, LED_0, GPIO_PIN_RESET );
+	if ( leds[1] )
+		HAL_GPIO_WritePin( LED_PORT, LED_1, GPIO_PIN_SET );
+	else
+		HAL_GPIO_WritePin( LED_PORT, LED_1, GPIO_PIN_RESET );
+}
+
+
+
+
 
