@@ -67,7 +67,7 @@ static void vTaskUsbIo( void * p )
 		{
 			USBD_HID_SendReport(&hUsbDeviceFS, (uint8_t *)&mouseHID, sizeof(struct mouseHID_t));
 		}
-		osDelay( 3 );
+		//osDelay( 1 );
 	}
 	//for (;;)
 	//{

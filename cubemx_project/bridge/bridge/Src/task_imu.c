@@ -14,7 +14,9 @@ static void vTaskImu( void * p );
 
 static osMutexDef_t mutex;
 static osMutexId    mutexId;
-osThreadDef(imuTask, vTaskImu, osPriorityAboveNormal, 0, 512);
+//osThreadDef(imuTask, vTaskImu, osPriorityAboveNormal, 0, 512);
+osThreadDef(imuTask, vTaskImu, osPriorityRealtime, 0, 512);
+
 void taskImuInit( void )
 {
 	bno055_inst.bus_write  = bno055_bus_write_i2c;
