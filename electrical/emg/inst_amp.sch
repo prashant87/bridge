@@ -1,0 +1,642 @@
+EESchema Schematic File Version 2
+LIBS:power
+LIBS:device
+LIBS:switches
+LIBS:relays
+LIBS:motors
+LIBS:transistors
+LIBS:conn
+LIBS:linear
+LIBS:regul
+LIBS:74xx
+LIBS:cmos4000
+LIBS:adc-dac
+LIBS:memory
+LIBS:xilinx
+LIBS:microcontrollers
+LIBS:dsp
+LIBS:microchip
+LIBS:analog_switches
+LIBS:motorola
+LIBS:texas
+LIBS:intel
+LIBS:audio
+LIBS:interface
+LIBS:digital-audio
+LIBS:philips
+LIBS:display
+LIBS:cypress
+LIBS:siliconi
+LIBS:opto
+LIBS:atmel
+LIBS:contrib
+LIBS:valves
+LIBS:a4985
+LIBS:ad5543
+LIBS:ad7683
+LIBS:ad8610
+LIBS:ad8620
+LIBS:adg5204
+LIBS:adr4533
+LIBS:adt7410
+LIBS:bat54s
+LIBS:cp2102
+LIBS:crystal-4pin
+LIBS:lb1930mc
+LIBS:m24c02
+LIBS:mcp1703t-3302e
+LIBS:mini-usb-b
+LIBS:my_comps
+LIBS:my-ncp1117st50t3g
+LIBS:ncp3063
+LIBS:ref196
+LIBS:spartan-sip-9007
+LIBS:stepper_conn
+LIBS:stm32f100rct6b
+LIBS:stm32f103cbt6
+LIBS:stm32f105r8t6
+LIBS:stm32f405rgt6
+LIBS:ts881
+LIBS:tsz124ipt
+LIBS:tsv734ipt
+LIBS:emg-cache
+EELAYER 25 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 2 8
+Title ""
+Date ""
+Rev ""
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+$Comp
+L TSZ124IPT U?
+U 1 1 5BA16C3F
+P 4325 2700
+AR Path="/5BA16C3F" Ref="U?"  Part="1" 
+AR Path="/5BA195B0/5BA16C3F" Ref="U?"  Part="1" 
+AR Path="/5BA1547E/5BA16C3F" Ref="U?"  Part="1" 
+F 0 "U?" H 4425 2500 60  0000 C CNN
+F 1 "TSZ124IPT" H 4575 2900 60  0000 C CNN
+F 2 "" H 4325 2700 60  0001 C CNN
+F 3 "" H 4325 2700 60  0001 C CNN
+	1    4325 2700
+	1    0    0    -1  
+$EndComp
+$Comp
+L C C?
+U 1 1 5BA16C46
+P 5275 3775
+AR Path="/5BA195B0/5BA16C46" Ref="C?"  Part="1" 
+AR Path="/5BA1547E/5BA16C46" Ref="C?"  Part="1" 
+F 0 "C?" H 5300 3875 50  0000 L CNN
+F 1 "2n2" H 5300 3675 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0603_1608Metric" H 5313 3625 50  0001 C CNN
+F 3 "" H 5275 3775 50  0001 C CNN
+	1    5275 3775
+	1    0    0    -1  
+$EndComp
+$Comp
+L VDDA #PWR?
+U 1 1 5BA16C4E
+P 4275 2150
+AR Path="/5BA195B0/5BA16C4E" Ref="#PWR?"  Part="1" 
+AR Path="/5BA1547E/5BA16C4E" Ref="#PWR?"  Part="1" 
+F 0 "#PWR?" H 4275 2000 50  0001 C CNN
+F 1 "VDDA" H 4275 2300 50  0000 C CNN
+F 2 "" H 4275 2150 50  0001 C CNN
+F 3 "" H 4275 2150 50  0001 C CNN
+	1    4275 2150
+	1    0    0    -1  
+$EndComp
+$Comp
+L GNDA #PWR?
+U 1 1 5BA16C55
+P 4275 3250
+AR Path="/5BA195B0/5BA16C55" Ref="#PWR?"  Part="1" 
+AR Path="/5BA1547E/5BA16C55" Ref="#PWR?"  Part="1" 
+F 0 "#PWR?" H 4275 3000 50  0001 C CNN
+F 1 "GNDA" H 4275 3100 50  0000 C CNN
+F 2 "" H 4275 3250 50  0001 C CNN
+F 3 "" H 4275 3250 50  0001 C CNN
+	1    4275 3250
+	1    0    0    -1  
+$EndComp
+$Comp
+L VDDA #PWR?
+U 1 1 5BA16C5B
+P 5275 3450
+AR Path="/5BA195B0/5BA16C5B" Ref="#PWR?"  Part="1" 
+AR Path="/5BA1547E/5BA16C5B" Ref="#PWR?"  Part="1" 
+F 0 "#PWR?" H 5275 3300 50  0001 C CNN
+F 1 "VDDA" H 5275 3600 50  0000 C CNN
+F 2 "" H 5275 3450 50  0001 C CNN
+F 3 "" H 5275 3450 50  0001 C CNN
+	1    5275 3450
+	1    0    0    -1  
+$EndComp
+$Comp
+L GNDA #PWR?
+U 1 1 5BA16C62
+P 5275 4125
+AR Path="/5BA195B0/5BA16C62" Ref="#PWR?"  Part="1" 
+AR Path="/5BA1547E/5BA16C62" Ref="#PWR?"  Part="1" 
+F 0 "#PWR?" H 5275 3875 50  0001 C CNN
+F 1 "GNDA" H 5275 3975 50  0000 C CNN
+F 2 "" H 5275 4125 50  0001 C CNN
+F 3 "" H 5275 4125 50  0001 C CNN
+	1    5275 4125
+	1    0    0    -1  
+$EndComp
+$Comp
+L TSZ124IPT U?
+U 2 1 5BA16C69
+P 4325 4700
+AR Path="/5BA16C69" Ref="U?"  Part="2" 
+AR Path="/5BA195B0/5BA16C69" Ref="U?"  Part="2" 
+AR Path="/5BA1547E/5BA16C69" Ref="U?"  Part="2" 
+F 0 "U?" H 4425 4500 60  0000 C CNN
+F 1 "TSZ124IPT" H 4575 4900 60  0000 C CNN
+F 2 "" H 4325 4700 60  0001 C CNN
+F 3 "" H 4325 4700 60  0001 C CNN
+	2    4325 4700
+	1    0    0    1   
+$EndComp
+$Comp
+L R R?
+U 1 1 5BA16C70
+P 3675 3925
+AR Path="/5BA195B0/5BA16C70" Ref="R?"  Part="1" 
+AR Path="/5BA1547E/5BA16C70" Ref="R?"  Part="1" 
+F 0 "R?" V 3755 3925 50  0000 C CNN
+F 1 "150 1%" V 3675 3925 50  0000 C CNN
+F 2 "Resistor_SMD:R_0603_1608Metric" V 3605 3925 30  0001 C CNN
+F 3 "" H 3675 3925 30  0000 C CNN
+	1    3675 3925
+	1    0    0    -1  
+$EndComp
+$Comp
+L R R?
+U 1 1 5BA16C77
+P 4300 3600
+AR Path="/5BA195B0/5BA16C77" Ref="R?"  Part="1" 
+AR Path="/5BA1547E/5BA16C77" Ref="R?"  Part="1" 
+F 0 "R?" V 4380 3600 50  0000 C CNN
+F 1 "47k1%" V 4300 3600 50  0000 C CNN
+F 2 "Resistor_SMD:R_0603_1608Metric" V 4230 3600 30  0001 C CNN
+F 3 "" H 4300 3600 30  0000 C CNN
+	1    4300 3600
+	0    1    1    0   
+$EndComp
+$Comp
+L R R?
+U 1 1 5BA16C7E
+P 4300 4225
+AR Path="/5BA195B0/5BA16C7E" Ref="R?"  Part="1" 
+AR Path="/5BA1547E/5BA16C7E" Ref="R?"  Part="1" 
+F 0 "R?" V 4380 4225 50  0000 C CNN
+F 1 "47k1%" V 4300 4225 50  0000 C CNN
+F 2 "Resistor_SMD:R_0603_1608Metric" V 4230 4225 30  0001 C CNN
+F 3 "" H 4300 4225 30  0000 C CNN
+	1    4300 4225
+	0    1    1    0   
+$EndComp
+$Comp
+L TSZ124IPT U?
+U 3 1 5BA16C85
+P 6375 3900
+AR Path="/5BA16C85" Ref="U?"  Part="3" 
+AR Path="/5BA195B0/5BA16C85" Ref="U?"  Part="3" 
+AR Path="/5BA1547E/5BA16C85" Ref="U?"  Part="3" 
+F 0 "U?" H 6475 3700 60  0000 C CNN
+F 1 "TSZ124IPT" H 6625 4100 60  0000 C CNN
+F 2 "" H 6375 3900 60  0001 C CNN
+F 3 "" H 6375 3900 60  0001 C CNN
+	3    6375 3900
+	1    0    0    1   
+$EndComp
+$Comp
+L R R?
+U 1 1 5BA16C8C
+P 5125 2700
+AR Path="/5BA195B0/5BA16C8C" Ref="R?"  Part="1" 
+AR Path="/5BA1547E/5BA16C8C" Ref="R?"  Part="1" 
+F 0 "R?" V 5205 2700 50  0000 C CNN
+F 1 "10k 1%" V 5125 2700 50  0000 C CNN
+F 2 "Resistor_SMD:R_0603_1608Metric" V 5055 2700 30  0001 C CNN
+F 3 "" H 5125 2700 30  0000 C CNN
+	1    5125 2700
+	0    -1   -1   0   
+$EndComp
+$Comp
+L R R?
+U 1 1 5BA16C93
+P 6200 4700
+AR Path="/5BA195B0/5BA16C93" Ref="R?"  Part="1" 
+AR Path="/5BA1547E/5BA16C93" Ref="R?"  Part="1" 
+F 0 "R?" V 6280 4700 50  0000 C CNN
+F 1 "10k 1%" V 6200 4700 50  0000 C CNN
+F 2 "Resistor_SMD:R_0603_1608Metric" V 6130 4700 30  0001 C CNN
+F 3 "" H 6200 4700 30  0000 C CNN
+	1    6200 4700
+	0    -1   -1   0   
+$EndComp
+$Comp
+L R R?
+U 1 1 5BA16C9A
+P 5125 4700
+AR Path="/5BA195B0/5BA16C9A" Ref="R?"  Part="1" 
+AR Path="/5BA1547E/5BA16C9A" Ref="R?"  Part="1" 
+F 0 "R?" V 5205 4700 50  0000 C CNN
+F 1 "10k 1%" V 5125 4700 50  0000 C CNN
+F 2 "Resistor_SMD:R_0603_1608Metric" V 5055 4700 30  0001 C CNN
+F 3 "" H 5125 4700 30  0000 C CNN
+	1    5125 4700
+	0    -1   -1   0   
+$EndComp
+$Comp
+L R R?
+U 1 1 5BA16CA1
+P 6200 2700
+AR Path="/5BA195B0/5BA16CA1" Ref="R?"  Part="1" 
+AR Path="/5BA1547E/5BA16CA1" Ref="R?"  Part="1" 
+F 0 "R?" V 6280 2700 50  0000 C CNN
+F 1 "10k 1%" V 6200 2700 50  0000 C CNN
+F 2 "Resistor_SMD:R_0603_1608Metric" V 6130 2700 30  0001 C CNN
+F 3 "" H 6200 2700 30  0000 C CNN
+	1    6200 2700
+	0    -1   -1   0   
+$EndComp
+$Comp
+L TSZ124IPT U?
+U 4 1 5BA16CC7
+P 9025 3750
+AR Path="/5BA16CC7" Ref="U?"  Part="4" 
+AR Path="/5BA195B0/5BA16CC7" Ref="U?"  Part="4" 
+AR Path="/5BA1547E/5BA16CC7" Ref="U?"  Part="4" 
+F 0 "U?" H 9125 3550 60  0000 C CNN
+F 1 "TSZ124IPT" H 9275 3950 60  0000 C CNN
+F 2 "" H 9025 3750 60  0001 C CNN
+F 3 "" H 9025 3750 60  0001 C CNN
+	4    9025 3750
+	1    0    0    -1  
+$EndComp
+$Comp
+L R R?
+U 1 1 5BA16CD0
+P 8200 3900
+AR Path="/5BA195B0/5BA16CD0" Ref="R?"  Part="1" 
+AR Path="/5BA1547E/5BA16CD0" Ref="R?"  Part="1" 
+F 0 "R?" V 8280 3900 50  0000 C CNN
+F 1 "1k 1%" V 8200 3900 50  0000 C CNN
+F 2 "Resistor_SMD:R_0603_1608Metric" V 8130 3900 30  0001 C CNN
+F 3 "" H 8200 3900 30  0000 C CNN
+	1    8200 3900
+	0    -1   -1   0   
+$EndComp
+$Comp
+L R R?
+U 1 1 5BA16CD8
+P 8950 4425
+AR Path="/5BA195B0/5BA16CD8" Ref="R?"  Part="1" 
+AR Path="/5BA1547E/5BA16CD8" Ref="R?"  Part="1" 
+F 0 "R?" V 9030 4425 50  0000 C CNN
+F 1 "10k 1%" V 8950 4425 50  0000 C CNN
+F 2 "Resistor_SMD:R_0603_1608Metric" V 8880 4425 30  0001 C CNN
+F 3 "" H 8950 4425 30  0000 C CNN
+	1    8950 4425
+	0    -1   -1   0   
+$EndComp
+$Comp
+L C C?
+U 1 1 5BA16CE5
+P 8975 4750
+AR Path="/5BA195B0/5BA16CE5" Ref="C?"  Part="1" 
+AR Path="/5BA1547E/5BA16CE5" Ref="C?"  Part="1" 
+F 0 "C?" H 9000 4850 50  0000 L CNN
+F 1 "100n" H 9000 4650 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0603_1608Metric" H 9013 4600 50  0001 C CNN
+F 3 "" H 8975 4750 50  0001 C CNN
+	1    8975 4750
+	0    1    1    0   
+$EndComp
+$Comp
+L C C?
+U 1 1 5BA16CF1
+P 3275 2750
+AR Path="/5BA195B0/5BA16CF1" Ref="C?"  Part="1" 
+AR Path="/5BA1547E/5BA16CF1" Ref="C?"  Part="1" 
+F 0 "C?" H 3300 2850 50  0000 L CNN
+F 1 "100n" H 3300 2650 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0603_1608Metric" H 3313 2600 30  0001 C CNN
+F 3 "" H 3275 2750 60  0000 C CNN
+	1    3275 2750
+	1    0    0    -1  
+$EndComp
+$Comp
+L GNDA #PWR?
+U 1 1 5BA16CFA
+P 3275 3000
+AR Path="/5BA195B0/5BA16CFA" Ref="#PWR?"  Part="1" 
+AR Path="/5BA1547E/5BA16CFA" Ref="#PWR?"  Part="1" 
+F 0 "#PWR?" H 3275 2750 50  0001 C CNN
+F 1 "GNDA" H 3275 2850 50  0000 C CNN
+F 2 "" H 3275 3000 50  0001 C CNN
+F 3 "" H 3275 3000 50  0001 C CNN
+	1    3275 3000
+	1    0    0    -1  
+$EndComp
+$Comp
+L C C?
+U 1 1 5BA16D00
+P 3275 5100
+AR Path="/5BA195B0/5BA16D00" Ref="C?"  Part="1" 
+AR Path="/5BA1547E/5BA16D00" Ref="C?"  Part="1" 
+F 0 "C?" H 3300 5200 50  0000 L CNN
+F 1 "100n" H 3300 5000 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0603_1608Metric" H 3313 4950 30  0001 C CNN
+F 3 "" H 3275 5100 60  0000 C CNN
+	1    3275 5100
+	1    0    0    -1  
+$EndComp
+$Comp
+L GNDA #PWR?
+U 1 1 5BA16D08
+P 3275 5350
+AR Path="/5BA195B0/5BA16D08" Ref="#PWR?"  Part="1" 
+AR Path="/5BA1547E/5BA16D08" Ref="#PWR?"  Part="1" 
+F 0 "#PWR?" H 3275 5100 50  0001 C CNN
+F 1 "GNDA" H 3275 5200 50  0000 C CNN
+F 2 "" H 3275 5350 50  0001 C CNN
+F 3 "" H 3275 5350 50  0001 C CNN
+	1    3275 5350
+	1    0    0    -1  
+$EndComp
+$Comp
+L R R?
+U 1 1 5BA16D0F
+P 2925 2550
+AR Path="/5BA195B0/5BA16D0F" Ref="R?"  Part="1" 
+AR Path="/5BA1547E/5BA16D0F" Ref="R?"  Part="1" 
+F 0 "R?" V 3005 2550 50  0000 C CNN
+F 1 "1k5 1%" V 2925 2550 50  0000 C CNN
+F 2 "Resistor_SMD:R_0603_1608Metric" V 2855 2550 30  0001 C CNN
+F 3 "" H 2925 2550 30  0000 C CNN
+	1    2925 2550
+	0    1    1    0   
+$EndComp
+$Comp
+L R R?
+U 1 1 5BA16D19
+P 2675 2275
+AR Path="/5BA195B0/5BA16D19" Ref="R?"  Part="1" 
+AR Path="/5BA1547E/5BA16D19" Ref="R?"  Part="1" 
+F 0 "R?" V 2755 2275 50  0000 C CNN
+F 1 "1M 1%" V 2675 2275 50  0000 C CNN
+F 2 "Resistor_SMD:R_0603_1608Metric" V 2605 2275 30  0001 C CNN
+F 3 "" H 2675 2275 30  0000 C CNN
+	1    2675 2275
+	-1   0    0    1   
+$EndComp
+$Comp
+L R R?
+U 1 1 5BA16D22
+P 2925 4850
+AR Path="/5BA195B0/5BA16D22" Ref="R?"  Part="1" 
+AR Path="/5BA1547E/5BA16D22" Ref="R?"  Part="1" 
+F 0 "R?" V 3005 4850 50  0000 C CNN
+F 1 "1k5 1%" V 2925 4850 50  0000 C CNN
+F 2 "Resistor_SMD:R_0603_1608Metric" V 2855 4850 30  0001 C CNN
+F 3 "" H 2925 4850 30  0000 C CNN
+	1    2925 4850
+	0    1    1    0   
+$EndComp
+$Comp
+L R R?
+U 1 1 5BA16D2B
+P 2675 4575
+AR Path="/5BA195B0/5BA16D2B" Ref="R?"  Part="1" 
+AR Path="/5BA1547E/5BA16D2B" Ref="R?"  Part="1" 
+F 0 "R?" V 2755 4575 50  0000 C CNN
+F 1 "1M 1%" V 2675 4575 50  0000 C CNN
+F 2 "Resistor_SMD:R_0603_1608Metric" V 2605 4575 30  0001 C CNN
+F 3 "" H 2675 4575 30  0000 C CNN
+	1    2675 4575
+	-1   0    0    1   
+$EndComp
+$Comp
+L C C?
+U 1 1 5BA16D35
+P 2400 2550
+AR Path="/5BA195B0/5BA16D35" Ref="C?"  Part="1" 
+AR Path="/5BA1547E/5BA16D35" Ref="C?"  Part="1" 
+F 0 "C?" H 2425 2650 50  0000 L CNN
+F 1 "22n" H 2425 2450 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0603_1608Metric" H 2438 2400 50  0001 C CNN
+F 3 "" H 2400 2550 50  0001 C CNN
+	1    2400 2550
+	0    1    1    0   
+$EndComp
+$Comp
+L C C?
+U 1 1 5BA16D3E
+P 2425 4850
+AR Path="/5BA195B0/5BA16D3E" Ref="C?"  Part="1" 
+AR Path="/5BA1547E/5BA16D3E" Ref="C?"  Part="1" 
+F 0 "C?" H 2450 4950 50  0000 L CNN
+F 1 "22n" H 2450 4750 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0603_1608Metric" H 2463 4700 50  0001 C CNN
+F 3 "" H 2425 4850 50  0001 C CNN
+	1    2425 4850
+	0    1    1    0   
+$EndComp
+Text GLabel 6750 4700 2    60   Input ~ 0
+v_ref
+Text GLabel 2975 2050 2    60   Input ~ 0
+v_ref
+Text GLabel 2975 4350 2    60   Input ~ 0
+v_ref
+$Comp
+L TEST_1P J?
+U 1 1 5BA16D4A
+P 1875 2550
+AR Path="/5BA195B0/5BA16D4A" Ref="J?"  Part="1" 
+AR Path="/5BA1547E/5BA16D4A" Ref="J?"  Part="1" 
+F 0 "J?" H 1875 2820 50  0000 C CNN
+F 1 "E2" H 1875 2750 50  0000 C CNN
+F 2 "" H 2075 2550 50  0001 C CNN
+F 3 "" H 2075 2550 50  0001 C CNN
+	1    1875 2550
+	0    -1   -1   0   
+$EndComp
+$Comp
+L TEST_1P J?
+U 1 1 5BA16D51
+P 1900 4850
+AR Path="/5BA195B0/5BA16D51" Ref="J?"  Part="1" 
+AR Path="/5BA1547E/5BA16D51" Ref="J?"  Part="1" 
+F 0 "J?" H 1900 5120 50  0000 C CNN
+F 1 "E1" H 1900 5050 50  0000 C CNN
+F 2 "" H 2100 4850 50  0001 C CNN
+F 3 "" H 2100 4850 50  0001 C CNN
+	1    1900 4850
+	0    -1   -1   0   
+$EndComp
+$Comp
+L TEST_1P J?
+U 1 1 5BA16D58
+P 7600 3800
+AR Path="/5BA195B0/5BA16D58" Ref="J?"  Part="1" 
+AR Path="/5BA1547E/5BA16D58" Ref="J?"  Part="1" 
+F 0 "J?" H 7600 4070 50  0000 C CNN
+F 1 "T1" H 7600 4000 50  0000 C CNN
+F 2 "" H 7800 3800 50  0001 C CNN
+F 3 "" H 7800 3800 50  0001 C CNN
+	1    7600 3800
+	1    0    0    -1  
+$EndComp
+$Comp
+L TEST_1P J?
+U 1 1 5BA16D61
+P 9625 3625
+AR Path="/5BA195B0/5BA16D61" Ref="J?"  Part="1" 
+AR Path="/5BA1547E/5BA16D61" Ref="J?"  Part="1" 
+F 0 "J?" H 9625 3895 50  0000 C CNN
+F 1 "T2" H 9625 3825 50  0000 C CNN
+F 2 "" H 9825 3625 50  0001 C CNN
+F 3 "" H 9825 3625 50  0001 C CNN
+	1    9625 3625
+	1    0    0    -1  
+$EndComp
+Text GLabel 8375 3375 1    60   Input ~ 0
+v_ref
+Text HLabel 10225 3750 2    60   Input ~ 0
+out
+Wire Wire Line
+	4275 2350 4275 2150
+Wire Wire Line
+	4275 3050 4275 3250
+Wire Wire Line
+	5275 3625 5275 3450
+Wire Wire Line
+	5275 4125 5275 3925
+Wire Wire Line
+	3675 3775 3675 2850
+Wire Wire Line
+	3675 2850 3875 2850
+Wire Wire Line
+	3875 4550 3675 4550
+Wire Wire Line
+	3675 4550 3675 4075
+Wire Wire Line
+	4150 4225 3675 4225
+Connection ~ 3675 4225
+Wire Wire Line
+	4150 3600 3675 3600
+Connection ~ 3675 3600
+Wire Wire Line
+	4775 2700 4975 2700
+Wire Wire Line
+	4450 3600 4875 3600
+Wire Wire Line
+	4875 3600 4875 2700
+Connection ~ 4875 2700
+Wire Wire Line
+	4775 4700 4975 4700
+Wire Wire Line
+	4450 4225 4875 4225
+Wire Wire Line
+	4875 4225 4875 4700
+Connection ~ 4875 4700
+Wire Wire Line
+	5275 2700 6050 2700
+Wire Wire Line
+	5275 4700 6050 4700
+Wire Wire Line
+	5925 3750 5725 3750
+Wire Wire Line
+	5725 3750 5725 2700
+Connection ~ 5725 2700
+Wire Wire Line
+	5925 4050 5725 4050
+Wire Wire Line
+	5725 4050 5725 4700
+Connection ~ 5725 4700
+Wire Wire Line
+	6350 4700 6750 4700
+Wire Wire Line
+	6825 3900 8050 3900
+Wire Wire Line
+	7025 3900 7025 2700
+Wire Wire Line
+	7025 2700 6350 2700
+Connection ~ 7025 3900
+Wire Wire Line
+	3075 2550 3875 2550
+Wire Wire Line
+	3075 4850 3875 4850
+Wire Wire Line
+	8575 3600 8375 3600
+Wire Wire Line
+	8375 3600 8375 3375
+Wire Wire Line
+	8350 3900 8575 3900
+Wire Wire Line
+	8800 4425 8450 4425
+Wire Wire Line
+	8450 3900 8450 4750
+Connection ~ 8450 3900
+Wire Wire Line
+	9625 3625 9625 4750
+Wire Wire Line
+	9625 4425 9100 4425
+Connection ~ 9625 3750
+Wire Wire Line
+	8450 4750 8825 4750
+Connection ~ 8450 4425
+Wire Wire Line
+	9625 4750 9125 4750
+Connection ~ 9625 4425
+Wire Wire Line
+	9475 3750 10225 3750
+Wire Wire Line
+	3275 2600 3275 2550
+Wire Wire Line
+	3275 2900 3275 3000
+Wire Wire Line
+	3275 5250 3275 5350
+Wire Wire Line
+	3275 4950 3275 4850
+Connection ~ 3275 2550
+Wire Wire Line
+	2550 2550 2775 2550
+Wire Wire Line
+	2675 2550 2675 2425
+Wire Wire Line
+	2675 2125 2675 2050
+Wire Wire Line
+	2675 2050 2975 2050
+Wire Wire Line
+	2575 4850 2775 4850
+Wire Wire Line
+	2675 4850 2675 4725
+Wire Wire Line
+	2675 4425 2675 4350
+Wire Wire Line
+	2675 4350 2975 4350
+Connection ~ 3275 4850
+Connection ~ 2675 2550
+Wire Wire Line
+	2250 2550 1875 2550
+Wire Wire Line
+	2275 4850 1900 4850
+Connection ~ 2675 4850
+Wire Wire Line
+	7600 3800 7600 3900
+Connection ~ 7600 3900
+$EndSCHEMATC
