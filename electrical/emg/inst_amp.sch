@@ -616,7 +616,7 @@ Connection ~ 3275 2550
 Wire Wire Line
 	2550 2550 2775 2550
 Wire Wire Line
-	2675 2550 2675 2425
+	2675 2425 2675 2850
 Wire Wire Line
 	2675 2125 2675 2050
 Wire Wire Line
@@ -624,7 +624,7 @@ Wire Wire Line
 Wire Wire Line
 	2575 4850 2775 4850
 Wire Wire Line
-	2675 4850 2675 4725
+	2675 4725 2675 5150
 Wire Wire Line
 	2675 4425 2675 4350
 Wire Wire Line
@@ -639,4 +639,40 @@ Connection ~ 2675 4850
 Wire Wire Line
 	7600 3800 7600 3900
 Connection ~ 7600 3900
+$Comp
+L R R?
+U 1 1 5BA3109B
+P 2400 2850
+F 0 "R?" V 2480 2850 50  0000 C CNN
+F 1 "1k5 1%" V 2400 2850 50  0000 C CNN
+F 2 "Resistor_SMD:R_0603_1608Metric" V 2330 2850 30  0001 C CNN
+F 3 "" H 2400 2850 30  0000 C CNN
+	1    2400 2850
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	2675 2850 2550 2850
+Wire Wire Line
+	2250 2850 2150 2850
+Wire Wire Line
+	2150 2850 2150 2550
+Connection ~ 2150 2550
+$Comp
+L R R?
+U 1 1 5BA31239
+P 2425 5150
+F 0 "R?" V 2505 5150 50  0000 C CNN
+F 1 "1k5 1%" V 2425 5150 50  0000 C CNN
+F 2 "Resistor_SMD:R_0603_1608Metric" V 2355 5150 30  0001 C CNN
+F 3 "" H 2425 5150 30  0000 C CNN
+	1    2425 5150
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	2675 5150 2575 5150
+Wire Wire Line
+	2275 5150 2125 5150
+Wire Wire Line
+	2125 5150 2125 4850
+Connection ~ 2125 4850
 $EndSCHEMATC

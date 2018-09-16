@@ -517,7 +517,6 @@ Text GLabel 8375 3375 1    60   Input ~ 0
 v_ref
 Text HLabel 10225 3750 2    60   Input ~ 0
 out
-NoConn ~ 1725 4875
 Wire Wire Line
 	4275 2350 4275 2150
 Wire Wire Line
