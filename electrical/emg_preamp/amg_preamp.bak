@@ -726,4 +726,73 @@ F 3 "" H 9325 3750 30  0000 C CNN
 $EndComp
 Wire Wire Line
 	9475 3750 9725 3750
+Wire Notes Line
+	9325 3575 9050 3050
+Text Notes 8200 2950 0    60   ~ 0
+Long wires after a socket may introduce noise \nas it typically happens at opamp output with \npresence of a capacitance. A resistance is supposed \nto help a little bit. So that opamp output works \non a little piece of wire before the resistance.
+$Comp
+L C C?
+U 1 1 5BA2AEB9
+P 9600 4875
+F 0 "C?" H 9625 4975 50  0000 L CNN
+F 1 "100n" H 9625 4775 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0603_1608Metric" H 9638 4725 50  0001 C CNN
+F 3 "" H 9600 4875 50  0001 C CNN
+	1    9600 4875
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	9600 4500 9600 4725
+Text Label 9600 4700 1    60   ~ 0
+v_ref
+Wire Wire Line
+	9600 5025 9600 5125
+$Comp
+L GNDA #PWR?
+U 1 1 5BA2B5DD
+P 9600 5125
+F 0 "#PWR?" H 9600 4875 50  0001 C CNN
+F 1 "GNDA" H 9600 4975 50  0000 C CNN
+F 2 "" H 9600 5125 50  0001 C CNN
+F 3 "" H 9600 5125 50  0001 C CNN
+	1    9600 5125
+	1    0    0    -1  
+$EndComp
+$Comp
+L C C?
+U 1 1 5BA2C11E
+P 9225 4875
+F 0 "C?" H 9250 4975 50  0000 L CNN
+F 1 "100n" H 9250 4775 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0603_1608Metric" H 9263 4725 50  0001 C CNN
+F 3 "" H 9225 4875 50  0001 C CNN
+	1    9225 4875
+	1    0    0    -1  
+$EndComp
+$Comp
+L VDDA #PWR?
+U 1 1 5BA2C124
+P 9225 4550
+F 0 "#PWR?" H 9225 4400 50  0001 C CNN
+F 1 "VDDA" H 9225 4700 50  0000 C CNN
+F 2 "" H 9225 4550 50  0001 C CNN
+F 3 "" H 9225 4550 50  0001 C CNN
+	1    9225 4550
+	1    0    0    -1  
+$EndComp
+$Comp
+L GNDA #PWR?
+U 1 1 5BA2C12A
+P 9225 5225
+F 0 "#PWR?" H 9225 4975 50  0001 C CNN
+F 1 "GNDA" H 9225 5075 50  0000 C CNN
+F 2 "" H 9225 5225 50  0001 C CNN
+F 3 "" H 9225 5225 50  0001 C CNN
+	1    9225 5225
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	9225 4725 9225 4550
+Wire Wire Line
+	9225 5225 9225 5025
 $EndSCHEMATC
