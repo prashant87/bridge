@@ -1377,17 +1377,6 @@ Connection ~ 2000 13450
 Wire Wire Line
 	16875 4225 17175 4225
 $Comp
-L TEST_1P J10
-U 1 1 5BA28850
-P 19300 1200
-F 0 "J10" H 19300 1470 50  0000 C CNN
-F 1 "Ref" H 19300 1400 50  0000 C CNN
-F 2 "TestPoint:TestPoint_Pad_D2.5mm" H 19500 1200 50  0001 C CNN
-F 3 "" H 19500 1200 50  0001 C CNN
-	1    19300 1200
-	0    1    -1   0   
-$EndComp
-$Comp
 L R R25
 U 1 1 5BA2AC3E
 P 19000 1200
@@ -1399,7 +1388,7 @@ F 3 "" H 19000 1200 30  0000 C CNN
 	0    1    -1   0   
 $EndComp
 Wire Wire Line
-	19150 1200 19300 1200
+	19150 1200 19575 1200
 $Comp
 L C C25
 U 1 1 5BA2C690
@@ -1659,13 +1648,13 @@ F 3 "" H 18950 5900 50  0001 C CNN
 $EndComp
 Wire Wire Line
 	16875 6150 17175 6150
-Text Label 19725 4075 0    60   ~ 0
+Text Label 19700 6000 0    60   ~ 0
 in_1
 Text Label 16925 6150 0    60   ~ 0
 v_ref
 Wire Wire Line
 	17700 5850 16875 5850
-Text Label 16925 3925 0    60   ~ 0
+Text Label 16925 5850 0    60   ~ 0
 v_1
 $Comp
 L R R12
@@ -1744,13 +1733,13 @@ F 3 "" H 18950 7850 50  0001 C CNN
 $EndComp
 Wire Wire Line
 	16875 8100 17175 8100
-Text Label 19700 6000 0    60   ~ 0
+Text Label 19700 4075 0    60   ~ 0
 in_2
 Text Label 16925 8100 0    60   ~ 0
 v_ref
 Wire Wire Line
 	17700 7800 16875 7800
-Text Label 16925 5850 0    60   ~ 0
+Text Label 16925 3925 0    60   ~ 0
 v_2
 $Comp
 L R R16
@@ -2851,4 +2840,28 @@ F 3 "" H 3475 5150 50  0001 C CNN
 	1    3475 5150
 	1    0    0    -1  
 $EndComp
+$Comp
+L Conn_01x05 J?
+U 1 1 5BA2D36D
+P 19775 1200
+F 0 "J?" H 19775 1500 50  0000 C CNN
+F 1 "Ref" H 19775 900 50  0000 C CNN
+F 2 "Pin_Headers:Pin_Header_Straight_1x05_Pitch1.27mm" H 19775 1200 50  0001 C CNN
+F 3 "" H 19775 1200 50  0001 C CNN
+	1    19775 1200
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	19475 1000 19475 1400
+Wire Wire Line
+	19475 1100 19575 1100
+Connection ~ 19475 1200
+Wire Wire Line
+	19475 1000 19575 1000
+Connection ~ 19475 1100
+Wire Wire Line
+	19475 1300 19575 1300
+Wire Wire Line
+	19475 1400 19575 1400
+Connection ~ 19475 1300
 $EndSCHEMATC
