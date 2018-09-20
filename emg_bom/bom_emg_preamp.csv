@@ -1,0 +1,16 @@
+Id	Designator	Package	Quantity	Designation	Supplier and ref
+1	C1,C2	C_0603_1608Metric	2	22n	https://www.digikey.com/product-detail/en/tdk-corporation/CGA3E2X7R2A223K080AA/445-5814-1-ND/2443854
+2	C3,C4,C6,C7,C8	C_0603_1608Metric	5	100n	https://www.digikey.com/product-detail/en/tdk-corporation/C1608X7R1E104K080AA/445-1316-1-ND/567697
+3	C5	C_0603_1608Metric	1	2n2	https://www.digikey.com/product-detail/en/murata-electronics-north-america/GCM188R71H222KA37D/490-4931-1-ND/1765250
+4	J1	Pin_Header_Straight_1x02_Pitch1.27mm	1	in	
+5	J2	TestPoint_Pad_D1.0mm	1	T1	
+6	J3	TestPoint_Pad_D1.0mm	1	T2	
+7	J4	Pin_Header_Straight_1x05_Pitch1.27mm	1	Conn_01x05	https://www.digikey.com/product-detail/en/harwin-inc/M50-3531042/952-3604-ND/7044019
+8	R1,R2,R5,R6	R_0603_1608Metric	4	1k5 1%	https://www.digikey.com/product-detail/en/stackpole-electronics-inc/RNCP0603FTD1K50/RNCP0603FTD1K50CT-ND/2240449
+9	R3,R4	R_0603_1608Metric	2	1M 1%	https://www.digikey.com/product-detail/en/yageo/RC0603FR-071ML/311-1.00MHRCT-ND/729791
+10	R7	R_0603_1608Metric	1	150 1%	https://www.digikey.com/product-detail/en/panasonic-electronic-components/ERJ-3EKF1500V/P150HCT-ND/198177
+11	R8,R9	R_0603_1608Metric	2	47k1%	https://www.digikey.com/product-detail/en/yageo/RC0603FR-0747KL/311-47.0KHRCT-ND/730200
+12	R10,R11,R12,R13	R_0603_1608Metric	4	10k 1%	https://www.digikey.com/product-detail/en/vishay-beyschlag/MCT06030C1002FP500/MCT0603-10.0K-CFCT-ND/2607933
+13	R14,R16	R_0603_1608Metric	2	1k 1%	https://www.digikey.com/product-detail/en/vishay-beyschlag/MCT06030C1001FP500/MCT0603-1.00K-CFCT-ND/2607875
+14	R15	R_0603_1608Metric	1	100k 1%	https://www.digikey.com/product-detail/en/te-connectivity-passive-product/CRG0603F100K/A106046CT-ND/3477684
+15	U1	TSSOP-14_4.4x5mm_P0.65mm	1	TSZ124IPT	https://www.digikey.com/product-detail/en/stmicroelectronics/TSZ124IPT/497-14336-1-ND/4576433
