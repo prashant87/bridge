@@ -1,6 +1,6 @@
 Id	Designator	Package	Quantity	Designation	Supplier and ref
 1	C1,C2	C_0603_1608Metric	2	22n	https://www.digikey.com/product-detail/en/tdk-corporation/CGA3E2X7R2A223K080AA/445-5814-1-ND/2443854
-2	C3,C4,C6,C7,C8	C_0603_1608Metric	5	100n	https://www.digikey.com/product-detail/en/tdk-corporation/C1608X7R1E104K080AA/445-1316-1-ND/567697
+2	C3,C4,C6,C7,C8	C_0603_1608Metric	5	100n	https://www.digikey.com/product-detail/en/CL10B104KO8NNNC/1276-1005-1-ND/3889091/?itemSeq=272576957
 3	C5	C_0603_1608Metric	1	2n2	https://www.digikey.com/product-detail/en/murata-electronics-north-america/GCM188R71H222KA37D/490-4931-1-ND/1765250
 4	J1	Pin_Header_Straight_1x02_Pitch1.27mm	1	in	
 5	J2	TestPoint_Pad_D1.0mm	1	T1	
