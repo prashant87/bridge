@@ -1,0 +1,14 @@
+
+build
+build.release
+app
+_build
+_app
+_temp
+.build
+.app
+*.so
+*.a
+CMakeLists.txt.user
+
+
