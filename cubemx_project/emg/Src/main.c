@@ -78,40 +78,14 @@ int main(void)
 
   /* USER CODE END SysInit */
 
-  /* Initialize all configured peripherals */
+  // Init GPIO to be able to blink LEDs, exchange data over USB and
+  // measure external voltages via ADC.
   MX_GPIO_Init();
-  MX_ADC1_Init();
-  /* USER CODE BEGIN 2 */
-
-  /* USER CODE END 2 */
-
-  /* USER CODE BEGIN RTOS_MUTEX */
-  /* add mutexes, ... */
-  /* USER CODE END RTOS_MUTEX */
-
-  /* USER CODE BEGIN RTOS_SEMAPHORES */
-  /* add semaphores, ... */
-  /* USER CODE END RTOS_SEMAPHORES */
-
-  /* USER CODE BEGIN RTOS_TIMERS */
-  /* start timers, add new ones, ... */
-  /* USER CODE END RTOS_TIMERS */
-
-  /* Create the thread(s) */
-  /* definition and creation of defaultTask */
+  // Create USB processing thread first as it allows data IO.
   osThreadDef(usbThread, usbTask, osPriorityNormal, 0, 128);
   defaultTaskHandle = osThreadCreate(osThread(usbThread), NULL);
-
-  osThreadDef(adcThread, adcTask, osPriorityNormal, 0, 128);
-  defaultTaskHandle = osThreadCreate(osThread(adcThread), NULL);
-
-  /* USER CODE BEGIN RTOS_THREADS */
-  /* add threads, ... */
-  /* USER CODE END RTOS_THREADS */
-
-  /* USER CODE BEGIN RTOS_QUEUES */
-  /* add queues, ... */
-  /* USER CODE END RTOS_QUEUES */
+  // Create ADC. It should send data over a queue into USB routine.
+  MX_ADC1_Init();
  
 
   /* Start scheduler */
@@ -123,13 +97,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-
-  /* USER CODE END WHILE */
-
-  /* USER CODE BEGIN 3 */
-
   }
-  /* USER CODE END 3 */
 
 }
 
@@ -193,7 +161,6 @@ void SystemClock_Config(void)
 /* ADC1 init function */
 static void MX_ADC1_Init(void)
 {
-
   ADC_ChannelConfTypeDef sConfig;
 
     /**Configure the global features of the ADC (Clock, Resolution, Data Alignment and number of conversion) 
@@ -201,13 +168,13 @@ static void MX_ADC1_Init(void)
   hadc1.Instance = ADC1;
   hadc1.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV4;
   hadc1.Init.Resolution = ADC_RESOLUTION_12B;
-  hadc1.Init.ScanConvMode = DISABLE;
-  hadc1.Init.ContinuousConvMode = DISABLE;
+  hadc1.Init.ScanConvMode = ENABLE;
+  hadc1.Init.ContinuousConvMode = ENABLE;
   hadc1.Init.DiscontinuousConvMode = DISABLE;
   hadc1.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
   hadc1.Init.ExternalTrigConv = ADC_SOFTWARE_START;
   hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
-  hadc1.Init.NbrOfConversion = 1;
+  hadc1.Init.NbrOfConversion = 7;
   hadc1.Init.DMAContinuousRequests = DISABLE;
   hadc1.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
   if (HAL_ADC_Init(&hadc1) != HAL_OK)
@@ -217,12 +184,70 @@ static void MX_ADC1_Init(void)
 
     /**Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time. 
     */
+  const uint32_t sampling_tim = ADC_SAMPLETIME_480CYCLES;
+
   sConfig.Channel = ADC_CHANNEL_0;
   sConfig.Rank = 1;
-  sConfig.SamplingTime = ADC_SAMPLETIME_3CYCLES;
+  sConfig.SamplingTime = sampling_tim;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
     _Error_Handler(__FILE__, __LINE__);
+  }
+
+  sConfig.Channel = ADC_CHANNEL_1;
+  sConfig.Rank = 2;
+  sConfig.SamplingTime = sampling_tim;
+  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+  sConfig.Channel = ADC_CHANNEL_2;
+  sConfig.Rank = 3;
+  sConfig.SamplingTime = sampling_tim;
+  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+  sConfig.Channel = ADC_CHANNEL_3;
+  sConfig.Rank = 4;
+  sConfig.SamplingTime = sampling_tim;
+  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+  sConfig.Channel = ADC_CHANNEL_4;
+  sConfig.Rank = 5;
+  sConfig.SamplingTime = sampling_tim;
+  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+  sConfig.Channel = ADC_CHANNEL_5;
+  sConfig.Rank = 6;
+  sConfig.SamplingTime = sampling_tim;
+  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+  sConfig.Channel = ADC_CHANNEL_6;
+  sConfig.Rank = 7;
+  sConfig.SamplingTime = sampling_tim;
+  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+
+  // Start ADC in interrupt mode.
+  if ( HAL_ADC_Start_IT( &hadc1 ) != HAL_OK )
+  {
+    /* Start Conversation Error */
+    Error_Handler();
   }
 
 }
@@ -327,6 +352,8 @@ void usbTask(void const * argument)
     	evt = osMessageGet( AdcDataQueue, 1 );
     	if ( evt.status == osEventMessage )
     	{
+    		clrLeds( 2 );
+
     		AdcDataT * data = (AdcDataT *)evt.value.p;
     		// Add it to the array to be sent.
     		int ind = msgsQty*bytesPerMsg;
@@ -340,10 +367,13 @@ void usbTask(void const * argument)
     	if ( ( msgsQty >= MSGS_QTY ) ||
     	     ( timeout && ( msgsQty > 0 ) ) )
     	{
+    		setLeds( 4 );
     		// Send through USB. And zero messages qty.
     		const int len = msgsQty * bytesPerMsg;
     		CDC_Transmit_HS( packet, len );
     		msgsQty = 0;
+
+    		clrLeds( 4 );
     	}
 
         //osDelay(1);
@@ -351,23 +381,36 @@ void usbTask(void const * argument)
     /* USER CODE END 5 */
 }
 
-void adcTask(void const * argument)
+
+AdcDataT * data = 0;
+uint16_t channelRank = 0;
+uint16_t adcValue = 0;
+void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* AdcHandle)
 {
-	static unsigned short i = 0;
+	setLeds( 1 );
+	/* Get the converted value of regular channel */
+	adcValue = HAL_ADC_GetValue(AdcHandle);
 
-	for (;;)
+	// Depending on what's going on actions might differ.
+	if ( data == 0 )
+		data = (AdcDataT*)osPoolAlloc( AdcDataPool );
+	if ( data )
 	{
-		// Setup ADC to capture data in a loop and put those to a queue.
-		AdcDataT * data = (AdcDataT*)osPoolAlloc(AdcDataPool);
-
-		for (i=0; i<7; i++)
+		channelRank = AdcHandle->NbrOfCurrentConversionRank - 1;
+		data->v[channelRank] = adcValue;
+		if ( channelRank == 6 )
 		{
-			data->v[i] = i++;
-		}
+			setLeds( 2 );
 
-		osMessagePut( AdcDataQueue, (uint32_t)data, 0 );
+			osMessagePut( AdcDataQueue, (uint32_t)data, 0 );
+			data = 0;
+		}
 	}
+
+	clrLeds( 1 );
 }
+
+
 
 void setLeds( uint16_t bits )
 {
