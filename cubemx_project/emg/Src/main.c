@@ -4,6 +4,7 @@
 #include "stm32f4xx_hal.h"
 #include "cmsis_os.h"
 #include "usb_device.h"
+#include "usbd_cdc_if.h"
 
 /* USER CODE BEGIN Includes */
 
@@ -36,6 +37,9 @@ void queueInit(void);
 
 void usbTask(void const * argument);
 void adcTask(void const * argument);
+
+void setLeds( uint16_t bits );
+void clrLeds( uint16_t bits );
 
 
 /* USER CODE BEGIN PFP */
@@ -95,8 +99,11 @@ int main(void)
 
   /* Create the thread(s) */
   /* definition and creation of defaultTask */
-  osThreadDef(defaultTask, usbTask, osPriorityNormal, 0, 128);
-  defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
+  osThreadDef(usbThread, usbTask, osPriorityNormal, 0, 128);
+  defaultTaskHandle = osThreadCreate(osThread(usbThread), NULL);
+
+  osThreadDef(adcThread, adcTask, osPriorityNormal, 0, 128);
+  defaultTaskHandle = osThreadCreate(osThread(adcThread), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -306,6 +313,7 @@ void usbTask(void const * argument)
 	#define MSGS_QTY  4
 	static osEvent evt;
 	static unsigned char packet[PACKET_SZ];
+	const int bytesPerMsg = sizeof(AdcDataT);
 	static int msgsQty = 0;
 
 
@@ -321,7 +329,6 @@ void usbTask(void const * argument)
     	{
     		AdcDataT * data = (AdcDataT *)evt.value.p;
     		// Add it to the array to be sent.
-    		const int bytesPerMsg = sizeof(AdcDataT);
     		int ind = msgsQty*bytesPerMsg;
     		unsigned char * d = (unsigned char *)(data->v);
     		for ( int i=0; i<bytesPerMsg; i++ )
@@ -334,6 +341,8 @@ void usbTask(void const * argument)
     	     ( timeout && ( msgsQty > 0 ) ) )
     	{
     		// Send through USB. And zero messages qty.
+    		const int len = msgsQty * bytesPerMsg;
+    		CDC_Transmit_HS( packet, len );
     		msgsQty = 0;
     	}
 
@@ -359,6 +368,23 @@ void adcTask(void const * argument)
 		osMessagePut( AdcDataQueue, (uint32_t)data, 0 );
 	}
 }
+
+void setLeds( uint16_t bits )
+{
+	const uint16_t pads = ( (bits & 0x0001) ? GPIO_PIN_3 : 0 ) |
+			              ( (bits & 0x0002) ? GPIO_PIN_4 : 0 ) |
+					      ( (bits & 0x0004) ? GPIO_PIN_5 : 0 );
+	HAL_GPIO_WritePin(GPIOB, pads, GPIO_PIN_SET );
+}
+
+void clrLeds( uint16_t bits )
+{
+	const uint16_t pads = ( (bits & 0x0001) ? GPIO_PIN_3 : 0 ) |
+			              ( (bits & 0x0002) ? GPIO_PIN_4 : 0 ) |
+					      ( (bits & 0x0004) ? GPIO_PIN_5 : 0 );
+	HAL_GPIO_WritePin(GPIOB, pads, GPIO_PIN_RESET );
+}
+
 
 /**
   * @brief  Period elapsed callback in non blocking mode
