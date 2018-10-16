@@ -36,7 +36,6 @@ osMessageQId   AdcDataQueue;
 void queueInit(void);
 
 void usbTask(void const * argument);
-void adcTask(void const * argument);
 
 void setLeds( uint16_t bits );
 void clrLeds( uint16_t bits );
@@ -81,6 +80,9 @@ int main(void)
   // Init GPIO to be able to blink LEDs, exchange data over USB and
   // measure external voltages via ADC.
   MX_GPIO_Init();
+
+  // Initialize the queue to be used for IRQ to thread data transfer.
+  queueInit();
   // Create USB processing thread first as it allows data IO.
   osThreadDef(usbThread, usbTask, osPriorityNormal, 0, 128);
   defaultTaskHandle = osThreadCreate(osThread(usbThread), NULL);
