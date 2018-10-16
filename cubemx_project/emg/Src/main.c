@@ -84,7 +84,7 @@ int main(void)
   // Initialize the queue to be used for IRQ to thread data transfer.
   queueInit();
   // Create USB processing thread first as it allows data IO.
-  osThreadDef(usbThread, usbTask, osPriorityNormal, 0, 128);
+  osThreadDef(usbThread, usbTask, osPriorityNormal, 0, 1024);
   defaultTaskHandle = osThreadCreate(osThread(usbThread), NULL);
   // Create ADC. It should send data over a queue into USB routine.
   MX_ADC1_Init();
