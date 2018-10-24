@@ -2,7 +2,8 @@
 
 set( proj "test_app" )
 
-include_directories( "./src" )
+include_directories( "./src"
+                     ${ROOT}/io/src )
 
 file( GLOB src "./src/*.cpp" )
 
