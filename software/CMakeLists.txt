@@ -28,6 +28,7 @@ set( OGRE_INCLUDES
 add_subdirectory( "./3dparty" )
 #add_subdirectory( "./app" )
 add_subdirectory( "./io" )
+add_subdirectory( "./test_app" )
 
 
 
