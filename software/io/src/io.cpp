@@ -12,7 +12,7 @@
 class Io::PD
 {
 public:
-    libusb_device_handler * dev;
+    libusb_device_handle * dev;
     int retries;
 
     PD();
@@ -59,7 +59,7 @@ bool Io::PD::open()
     {
         if ( libusb_kernel_driver_active( dev, itf ) )
             libusb_detach_kernel_driver( dev, itf );
-        int rc = libusb_clain_interface( dev, itf );
+        int rc = libusb_claim_interface( dev, itf );
         if ( rc < 0 )
         {
             close();
@@ -90,7 +90,7 @@ int  Io::PD::read( IoData * data, int maxQty )
     }
 
     int actual_length;
-    unsigned char * d = reinterpret_cast<unsinged char *>( data );
+    unsigned char * d = reinterpret_cast<unsigned char *>( data );
     const int sz = maxQty * sizeof( IoData );
     int rc = libusb_bulk_transfer( dev, EP_IN, d, sz, &actual_length, TIMEOUT );
     if ( rc <= 0 )
