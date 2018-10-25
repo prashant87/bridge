@@ -1,10 +1,56 @@
 
+/**
+  ******************************************************************************
+  * @file           : main.c
+  * @brief          : Main program body
+  ******************************************************************************
+  * This notice applies to any and all portions of this file
+  * that are not between comment pairs USER CODE BEGIN and
+  * USER CODE END. Other portions of this file, whether 
+  * inserted by the user or by software development tools
+  * are owned by their respective copyright owners.
+  *
+  * Copyright (c) 2018 STMicroelectronics International N.V. 
+  * All rights reserved.
+  *
+  * Redistribution and use in source and binary forms, with or without 
+  * modification, are permitted, provided that the following conditions are met:
+  *
+  * 1. Redistribution of source code must retain the above copyright notice, 
+  *    this list of conditions and the following disclaimer.
+  * 2. Redistributions in binary form must reproduce the above copyright notice,
+  *    this list of conditions and the following disclaimer in the documentation
+  *    and/or other materials provided with the distribution.
+  * 3. Neither the name of STMicroelectronics nor the names of other 
+  *    contributors to this software may be used to endorse or promote products 
+  *    derived from this software without specific written permission.
+  * 4. This software, including modifications and/or derivative works of this 
+  *    software, must execute solely and exclusively on microcontroller or
+  *    microprocessor devices manufactured by or for STMicroelectronics.
+  * 5. Redistribution and use of this software other than as permitted under 
+  *    this license is void and will automatically terminate your rights under 
+  *    this license. 
+  *
+  * THIS SOFTWARE IS PROVIDED BY STMICROELECTRONICS AND CONTRIBUTORS "AS IS" 
+  * AND ANY EXPRESS, IMPLIED OR STATUTORY WARRANTIES, INCLUDING, BUT NOT 
+  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A 
+  * PARTICULAR PURPOSE AND NON-INFRINGEMENT OF THIRD PARTY INTELLECTUAL PROPERTY
+  * RIGHTS ARE DISCLAIMED TO THE FULLEST EXTENT PERMITTED BY LAW. IN NO EVENT 
+  * SHALL STMICROELECTRONICS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+  * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+  * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, 
+  * OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF 
+  * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING 
+  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  *
+  ******************************************************************************
+  */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "stm32f4xx_hal.h"
 #include "cmsis_os.h"
 #include "usb_device.h"
-#include "usbd_cdc_if.h"
 
 /* USER CODE BEGIN Includes */
 
@@ -24,22 +70,7 @@ osThreadId defaultTaskHandle;
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_ADC1_Init(void);
-
-typedef struct {
-	unsigned short v[7];
-} AdcDataT;
-#define ADC_QUEUE_SZ 64
-osPoolDef( AdcDataPool, ADC_QUEUE_SZ, AdcDataT );
-osPoolId   AdcDataPool;
-osMessageQDef( AdcDataQueue, ADC_QUEUE_SZ, AdcDataT );
-osMessageQId   AdcDataQueue;
-void queueInit(void);
-
-void usbTask(void const * argument);
-
-void setLeds( uint16_t bits );
-void clrLeds( uint16_t bits );
-
+void StartDefaultTask(void const * argument);
 
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
@@ -77,17 +108,37 @@ int main(void)
 
   /* USER CODE END SysInit */
 
-  // Init GPIO to be able to blink LEDs, exchange data over USB and
-  // measure external voltages via ADC.
+  /* Initialize all configured peripherals */
   MX_GPIO_Init();
-
-  // Initialize the queue to be used for IRQ to thread data transfer.
-  queueInit();
-  // Create USB processing thread first as it allows data IO.
-  osThreadDef(usbThread, usbTask, osPriorityNormal, 0, 1024);
-  defaultTaskHandle = osThreadCreate(osThread(usbThread), NULL);
-  // Create ADC. It should send data over a queue into USB routine.
   MX_ADC1_Init();
+  /* USER CODE BEGIN 2 */
+
+  /* USER CODE END 2 */
+
+  /* USER CODE BEGIN RTOS_MUTEX */
+  /* add mutexes, ... */
+  /* USER CODE END RTOS_MUTEX */
+
+  /* USER CODE BEGIN RTOS_SEMAPHORES */
+  /* add semaphores, ... */
+  /* USER CODE END RTOS_SEMAPHORES */
+
+  /* USER CODE BEGIN RTOS_TIMERS */
+  /* start timers, add new ones, ... */
+  /* USER CODE END RTOS_TIMERS */
+
+  /* Create the thread(s) */
+  /* definition and creation of defaultTask */
+  osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 128);
+  defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
+
+  /* USER CODE BEGIN RTOS_THREADS */
+  /* add threads, ... */
+  /* USER CODE END RTOS_THREADS */
+
+  /* USER CODE BEGIN RTOS_QUEUES */
+  /* add queues, ... */
+  /* USER CODE END RTOS_QUEUES */
  
 
   /* Start scheduler */
@@ -99,7 +150,13 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+
+  /* USER CODE END WHILE */
+
+  /* USER CODE BEGIN 3 */
+
   }
+  /* USER CODE END 3 */
 
 }
 
@@ -163,6 +220,7 @@ void SystemClock_Config(void)
 /* ADC1 init function */
 static void MX_ADC1_Init(void)
 {
+
   ADC_ChannelConfTypeDef sConfig;
 
     /**Configure the global features of the ADC (Clock, Resolution, Data Alignment and number of conversion) 
@@ -174,11 +232,11 @@ static void MX_ADC1_Init(void)
   hadc1.Init.ContinuousConvMode = ENABLE;
   hadc1.Init.DiscontinuousConvMode = DISABLE;
   hadc1.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
-  hadc1.Init.ExternalTrigConv = ADC_EXTERNALTRIGCONV_T1_CC1; //ADC_SOFTWARE_START;
+  hadc1.Init.ExternalTrigConv = ADC_SOFTWARE_START;
   hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
-  hadc1.Init.NbrOfConversion = 1;
+  hadc1.Init.NbrOfConversion = 7;
   hadc1.Init.DMAContinuousRequests = DISABLE;
-  hadc1.Init.EOCSelection = DISABLE; //ADC_EOC_SINGLE_CONV;
+  hadc1.Init.EOCSelection = ADC_EOC_SEQ_CONV;
   if (HAL_ADC_Init(&hadc1) != HAL_OK)
   {
     _Error_Handler(__FILE__, __LINE__);
@@ -186,78 +244,66 @@ static void MX_ADC1_Init(void)
 
     /**Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time. 
     */
-  const uint32_t sampling_tim = ADC_SAMPLETIME_480CYCLES;
-
-  sConfig.Channel = ADC_CHANNEL_1;
+  sConfig.Channel = ADC_CHANNEL_0;
   sConfig.Rank = 1;
-  sConfig.SamplingTime = sampling_tim;
-  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
-  {
-      _Error_Handler(__FILE__, __LINE__);
-  }
-
-  /*sConfig.Channel = ADC_CHANNEL_0;
-  sConfig.Rank = 1;
-  sConfig.SamplingTime = sampling_tim;
+  sConfig.SamplingTime = ADC_SAMPLETIME_480CYCLES;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
     _Error_Handler(__FILE__, __LINE__);
   }
 
+    /**Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time. 
+    */
   sConfig.Channel = ADC_CHANNEL_1;
   sConfig.Rank = 2;
-  sConfig.SamplingTime = sampling_tim;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
     _Error_Handler(__FILE__, __LINE__);
   }
 
+    /**Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time. 
+    */
   sConfig.Channel = ADC_CHANNEL_2;
   sConfig.Rank = 3;
-  sConfig.SamplingTime = sampling_tim;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
     _Error_Handler(__FILE__, __LINE__);
   }
 
+    /**Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time. 
+    */
   sConfig.Channel = ADC_CHANNEL_3;
   sConfig.Rank = 4;
-  sConfig.SamplingTime = sampling_tim;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
     _Error_Handler(__FILE__, __LINE__);
   }
 
+    /**Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time. 
+    */
   sConfig.Channel = ADC_CHANNEL_4;
   sConfig.Rank = 5;
-  sConfig.SamplingTime = sampling_tim;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
     _Error_Handler(__FILE__, __LINE__);
   }
 
+    /**Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time. 
+    */
   sConfig.Channel = ADC_CHANNEL_5;
   sConfig.Rank = 6;
-  sConfig.SamplingTime = sampling_tim;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
     _Error_Handler(__FILE__, __LINE__);
   }
 
+    /**Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time. 
+    */
   sConfig.Channel = ADC_CHANNEL_6;
   sConfig.Rank = 7;
-  sConfig.SamplingTime = sampling_tim;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
     _Error_Handler(__FILE__, __LINE__);
-  }*/
-
-
-  // Start ADC in interrupt mode.
-  if ( HAL_ADC_Start_IT( &hadc1 ) != HAL_OK )
-  {
-    /* Start Conversation Error */
-    Error_Handler();
   }
 
 }
@@ -332,30 +378,27 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-
-/* USER CODE END 4 */
-
 void queueInit(void)
 {
     AdcDataPool  = osPoolCreate( osPool(AdcDataPool) );
     AdcDataQueue = osMessageCreate( osMessageQ(AdcDataQueue), 0 );
 }
 
+/* USER CODE END 4 */
+
 /* StartDefaultTask function */
-void usbTask(void const * argument)
+void StartDefaultTask(void const * argument)
 {
+  /* init code for USB_DEVICE */
+  //MX_USB_DEVICE_Init();
+
+  /* USER CODE BEGIN 5 */
 	#define PACKET_SZ 64
 	#define MSGS_QTY  4
 	static osEvent evt;
 	static unsigned char packet[PACKET_SZ];
 	const int bytesPerMsg = sizeof(AdcDataT);
 	static int msgsQty = 0;
-
-
-    /* init code for USB_DEVICE */
-    //MX_USB_DEVICE_Init();
-
-    /* USER CODE BEGIN 5 */
     /* Infinite loop */
     for(;;)
     {
@@ -388,60 +431,12 @@ void usbTask(void const * argument)
 
         //osDelay(1);
     }
-    /* USER CODE END 5 */
+  /* USER CODE END 5 */ 
 }
-
-
-AdcDataT * data = 0;
-uint16_t channelRank = 0;
-uint16_t adcValue = 0;
-void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* AdcHandle)
-{
-	setLeds( 1 );
-	/* Get the converted value of regular channel */
-	adcValue = HAL_ADC_GetValue(AdcHandle);
-
-	// Depending on what's going on actions might differ.
-	if ( data == 0 )
-		data = (AdcDataT*)osPoolAlloc( AdcDataPool );
-	if ( data )
-	{
-		channelRank = AdcHandle->NbrOfCurrentConversionRank - 1;
-		data->v[channelRank] = adcValue;
-		if ( channelRank == 6 )
-		{
-			setLeds( 2 );
-
-			osMessagePut( AdcDataQueue, (uint32_t)data, 0 );
-			data = 0;
-		}
-	}
-
-	clrLeds( 1 );
-}
-
-
-
-void setLeds( uint16_t bits )
-{
-	const uint16_t pads = ( (bits & 0x0001) ? GPIO_PIN_3 : 0 ) |
-			              ( (bits & 0x0002) ? GPIO_PIN_4 : 0 ) |
-					      ( (bits & 0x0004) ? GPIO_PIN_5 : 0 );
-	HAL_GPIO_WritePin(GPIOB, pads, GPIO_PIN_SET );
-}
-
-void clrLeds( uint16_t bits )
-{
-	const uint16_t pads = ( (bits & 0x0001) ? GPIO_PIN_3 : 0 ) |
-			              ( (bits & 0x0002) ? GPIO_PIN_4 : 0 ) |
-					      ( (bits & 0x0004) ? GPIO_PIN_5 : 0 );
-	HAL_GPIO_WritePin(GPIOB, pads, GPIO_PIN_RESET );
-}
-
 
 /**
   * @brief  Period elapsed callback in non blocking mode
-  * @note   This function is called  when TIM1 interrupt took place, inside
+  * @note   This function is called  when TIM14 interrupt took place, inside
   * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment
   * a global variable "uwTick" used as application time base.
   * @param  htim : TIM handle
@@ -452,7 +447,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   /* USER CODE BEGIN Callback 0 */
 
   /* USER CODE END Callback 0 */
-  if (htim->Instance == TIM1) {
+  if (htim->Instance == TIM14) {
     HAL_IncTick();
   }
   /* USER CODE BEGIN Callback 1 */
