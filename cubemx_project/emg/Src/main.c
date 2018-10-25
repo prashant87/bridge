@@ -82,16 +82,16 @@ int main(void)
   MX_GPIO_Init();
 
   // Initialize the queue to be used for IRQ to thread data transfer.
-  //queueInit();
+  queueInit();
   // Create USB processing thread first as it allows data IO.
-  //osThreadDef(usbThread, usbTask, osPriorityNormal, 0, 1024);
-  //defaultTaskHandle = osThreadCreate(osThread(usbThread), NULL);
+  osThreadDef(usbThread, usbTask, osPriorityNormal, 0, 1024);
+  defaultTaskHandle = osThreadCreate(osThread(usbThread), NULL);
   // Create ADC. It should send data over a queue into USB routine.
-  MX_ADC1_Init();
+  //MX_ADC1_Init();
  
 
   /* Start scheduler */
-  //osKernelStart();
+  osKernelStart();
   
   /* We should never get here as control is now taken by the scheduler */
 
@@ -353,13 +353,13 @@ void usbTask(void const * argument)
 
 
     /* init code for USB_DEVICE */
-    MX_USB_DEVICE_Init();
+    //MX_USB_DEVICE_Init();
 
     /* USER CODE BEGIN 5 */
     /* Infinite loop */
     for(;;)
     {
-    	evt = osMessageGet( AdcDataQueue, 1 );
+    	evt = osMessageGet( AdcDataQueue, 0 );
     	if ( evt.status == osEventMessage )
     	{
     		clrLeds( 2 );
@@ -380,7 +380,7 @@ void usbTask(void const * argument)
     		setLeds( 4 );
     		// Send through USB. And zero messages qty.
     		const int len = msgsQty * bytesPerMsg;
-    		CDC_Transmit_HS( packet, len );
+    		//CDC_Transmit_HS( packet, len );
     		msgsQty = 0;
 
     		clrLeds( 4 );
