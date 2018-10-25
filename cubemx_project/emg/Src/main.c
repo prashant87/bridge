@@ -82,16 +82,16 @@ int main(void)
   MX_GPIO_Init();
 
   // Initialize the queue to be used for IRQ to thread data transfer.
-  queueInit();
+  //queueInit();
   // Create USB processing thread first as it allows data IO.
-  osThreadDef(usbThread, usbTask, osPriorityNormal, 0, 1024);
-  defaultTaskHandle = osThreadCreate(osThread(usbThread), NULL);
+  //osThreadDef(usbThread, usbTask, osPriorityNormal, 0, 1024);
+  //defaultTaskHandle = osThreadCreate(osThread(usbThread), NULL);
   // Create ADC. It should send data over a queue into USB routine.
   MX_ADC1_Init();
  
 
   /* Start scheduler */
-  osKernelStart();
+  //osKernelStart();
   
   /* We should never get here as control is now taken by the scheduler */
 
@@ -188,7 +188,15 @@ static void MX_ADC1_Init(void)
     */
   const uint32_t sampling_tim = ADC_SAMPLETIME_480CYCLES;
 
-  sConfig.Channel = ADC_CHANNEL_0;
+  sConfig.Channel = ADC_CHANNEL_1;
+  sConfig.Rank = 1;
+  sConfig.SamplingTime = sampling_tim;
+  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
+  {
+      _Error_Handler(__FILE__, __LINE__);
+  }
+
+  /*sConfig.Channel = ADC_CHANNEL_0;
   sConfig.Rank = 1;
   sConfig.SamplingTime = sampling_tim;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
@@ -242,7 +250,7 @@ static void MX_ADC1_Init(void)
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
     _Error_Handler(__FILE__, __LINE__);
-  }
+  }*/
 
 
   // Start ADC in interrupt mode.
