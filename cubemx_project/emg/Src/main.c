@@ -87,7 +87,7 @@ int main(void)
   osThreadDef(usbThread, usbTask, osPriorityNormal, 0, 1024);
   defaultTaskHandle = osThreadCreate(osThread(usbThread), NULL);
   // Create ADC. It should send data over a queue into USB routine.
-  //MX_ADC1_Init();
+  MX_ADC1_Init();
  
 
   /* Start scheduler */
