@@ -53,7 +53,7 @@
 #include "usb_device.h"
 
 /* USER CODE BEGIN Includes */
-
+#include "usbd_cdc_if.h"
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
@@ -395,7 +395,7 @@ static void MX_GPIO_Init(void)
 void StartDefaultTask(void const * argument)
 {
   /* init code for USB_DEVICE */
-  //MX_USB_DEVICE_Init();
+  MX_USB_DEVICE_Init();
 
   /* USER CODE BEGIN 5 */
 	if ( HAL_ADC_Start_IT( &hadc1 ) != HAL_OK )
@@ -410,7 +410,7 @@ void StartDefaultTask(void const * argument)
     /* Infinite loop */
     for(;;)
     {
-    	evt = osMessageGet( AdcDataQueue, 0 );
+    	evt = osMessageGet( AdcDataQueue, 1 );
     	if ( evt.status == osEventMessage )
     	{
     		clrLeds( 2 );
@@ -421,6 +421,7 @@ void StartDefaultTask(void const * argument)
     		unsigned char * d = (unsigned char *)(data->v);
     		for ( int i=0; i<bytesPerMsg; i++ )
     			packet[ind++] = d[i];
+    		osPoolFree( AdcDataPool, (void *)data );
     		msgsQty += 1;
     	}
     	const int timeout = (evt.status == osEventTimeout);
@@ -431,7 +432,7 @@ void StartDefaultTask(void const * argument)
     		setLeds( 4 );
     		// Send through USB. And zero messages qty.
     		const int len = msgsQty * bytesPerMsg;
-    		//CDC_Transmit_HS( packet, len );
+    		CDC_Transmit_HS( packet, len );
     		msgsQty = 0;
 
     		clrLeds( 4 );
