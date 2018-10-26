@@ -212,11 +212,6 @@ void OTG_HS_IRQHandler(void)
 }
 
 /* USER CODE BEGIN 1 */
-extern ADC_HandleTypeDef hadc1;
-void ADC_IRQHandler(void)
-{
-	HAL_ADC_IRQHandler( &hadc1 );
-}
 
 /* USER CODE END 1 */
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

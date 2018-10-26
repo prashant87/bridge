@@ -78,7 +78,17 @@ void StartDefaultTask(void const * argument);
 /* USER CODE END PFP */
 
 /* USER CODE BEGIN 0 */
-
+typedef struct {
+	unsigned short v[7];
+} AdcDataT;
+#define ADC_QUEUE_SZ 64
+osPoolDef( AdcDataPool, ADC_QUEUE_SZ, AdcDataT );
+osPoolId   AdcDataPool;
+osMessageQDef( AdcDataQueue, ADC_QUEUE_SZ, AdcDataT );
+osMessageQId   AdcDataQueue;
+void queueInit(void);
+void setLeds( uint16_t bits );
+void clrLeds( uint16_t bits );
 /* USER CODE END 0 */
 
 /**
@@ -112,7 +122,7 @@ int main(void)
   MX_GPIO_Init();
   MX_ADC1_Init();
   /* USER CODE BEGIN 2 */
-
+  queueInit();
   /* USER CODE END 2 */
 
   /* USER CODE BEGIN RTOS_MUTEX */
@@ -378,11 +388,6 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-void queueInit(void)
-{
-    AdcDataPool  = osPoolCreate( osPool(AdcDataPool) );
-    AdcDataQueue = osMessageCreate( osMessageQ(AdcDataQueue), 0 );
-}
 
 /* USER CODE END 4 */
 
@@ -393,6 +398,9 @@ void StartDefaultTask(void const * argument)
   //MX_USB_DEVICE_Init();
 
   /* USER CODE BEGIN 5 */
+	if ( HAL_ADC_Start_IT( &hadc1 ) != HAL_OK )
+		Error_Handler();
+
 	#define PACKET_SZ 64
 	#define MSGS_QTY  4
 	static osEvent evt;
@@ -495,5 +503,62 @@ void assert_failed(uint8_t* file, uint32_t line)
 /**
   * @}
   */
+
+void queueInit(void)
+{
+    AdcDataPool  = osPoolCreate( osPool(AdcDataPool) );
+    AdcDataQueue = osMessageCreate( osMessageQ(AdcDataQueue), 0 );
+}
+
+
+AdcDataT * data = 0;
+uint16_t channelRank = 0;
+uint16_t adcValue = 0;
+void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* AdcHandle)
+{
+	setLeds( 1 );
+	/* Get the converted value of regular channel */
+	adcValue = HAL_ADC_GetValue(AdcHandle);
+
+	// Depending on what's going on actions might differ.
+	if ( data == 0 )
+		data = (AdcDataT*)osPoolAlloc( AdcDataPool );
+	if ( data )
+	{
+		channelRank = AdcHandle->NbrOfCurrentConversionRank;
+		data->v[channelRank] = adcValue;
+		if ( channelRank == 6 )
+		{
+			setLeds( 2 );
+
+			osMessagePut( AdcDataQueue, (uint32_t)data, 0 );
+			data = 0;
+		}
+	}
+
+	clrLeds( 1 );
+}
+
+
+
+void setLeds( uint16_t bits )
+{
+	const uint16_t pads = ( (bits & 0x0001) ? GPIO_PIN_3 : 0 ) |
+						  ( (bits & 0x0002) ? GPIO_PIN_4 : 0 ) |
+						  ( (bits & 0x0004) ? GPIO_PIN_5 : 0 );
+	HAL_GPIO_WritePin(GPIOB, pads, GPIO_PIN_SET );
+}
+
+void clrLeds( uint16_t bits )
+{
+	const uint16_t pads = ( (bits & 0x0001) ? GPIO_PIN_3 : 0 ) |
+						  ( (bits & 0x0002) ? GPIO_PIN_4 : 0 ) |
+						  ( (bits & 0x0004) ? GPIO_PIN_5 : 0 );
+	HAL_GPIO_WritePin(GPIOB, pads, GPIO_PIN_RESET );
+}
+
+
+
+
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
