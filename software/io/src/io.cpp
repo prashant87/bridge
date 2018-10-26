@@ -2,8 +2,8 @@
 #include "io.h"
 #include <libusb-1.0/libusb.h>
 
-#define VENDOR_ID  0x1234
-#define PRODUCT_ID 0x5678
+#define VENDOR_ID  0x0483
+#define PRODUCT_ID 0x5740
 
 #define EP_IN 0x81
 #define TIMEOUT 10
@@ -93,7 +93,7 @@ int  Io::PD::read( IoData * data, int maxQty )
     unsigned char * d = reinterpret_cast<unsigned char *>( data );
     const int sz = maxQty * sizeof( IoData );
     int rc = libusb_bulk_transfer( dev, EP_IN, d, sz, &actual_length, TIMEOUT );
-    if ( rc <= 0 )
+    if ( rc < 0 )
     {
         retries += 1;
         return rc;
@@ -102,9 +102,26 @@ int  Io::PD::read( IoData * data, int maxQty )
     int qty = actual_length / sizeof( IoData );
 
     return qty;
-
-
 }
+
+
+Io::Io()
+{
+    pd = new PD();
+}
+
+Io::~Io()
+{
+    delete pd;
+}
+
+int Io::read( IoData * data, int maxQty )
+{
+    if ( !pd )
+        return 0;
+    const int qty = pd->read( data, maxQty );
+}
+
 
 
 

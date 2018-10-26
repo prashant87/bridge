@@ -3,9 +3,12 @@
 #include <iomanip>
 #include "io.h"
 
+#include <chrono>
+#include <thread>
+
 int main( int argc, char * argv[] )
 {
-    const int QTY = 5;
+    const int QTY = 4;
     IoData data[QTY];
     Io io;
 
@@ -13,10 +16,10 @@ int main( int argc, char * argv[] )
     for ( ;; )
     {
         const int qty = io.read( data, QTY );
+        std::cout << "###############" << std::endl;
+        std::cout << "qty: " << qty << std::endl;
         if ( qty > 0 )
         {
-            std::cout << "###############" << std::endl;
-            std::cout << "qty: qty" << std::endl;
             for ( int i=0; i<qty; i++ )
             {
                 const IoData & d = data[i];
@@ -26,7 +29,10 @@ int main( int argc, char * argv[] )
             }
         }
         else
-
+        {
+            // Sleep
+            std::this_thread::sleep_for( std::chrono::milliseconds(1) );
+        }
     }
 
     return 0;
