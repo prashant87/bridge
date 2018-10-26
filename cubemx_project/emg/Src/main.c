@@ -512,7 +512,7 @@ void queueInit(void)
 
 
 AdcDataT * data = 0;
-uint16_t channelRank = 0;
+uint16_t channelIndex = 0;
 uint16_t adcValue = 0;
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* AdcHandle)
 {
@@ -525,14 +525,15 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* AdcHandle)
 		data = (AdcDataT*)osPoolAlloc( AdcDataPool );
 	if ( data )
 	{
-		channelRank = AdcHandle->NbrOfCurrentConversionRank;
-		data->v[channelRank] = adcValue;
-		if ( channelRank == 6 )
+		data->v[channelIndex] = adcValue;
+		channelIndex += 1;
+		if ( channelIndex > 6 )
 		{
 			setLeds( 2 );
 
 			osMessagePut( AdcDataQueue, (uint32_t)data, 0 );
 			data = 0;
+			channelIndex = 0;
 		}
 	}
 
