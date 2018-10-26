@@ -19,6 +19,7 @@ include_directories( ${OGRE_INCLUDE_DIRS}
                      ${OGRE_INCLUDE_DIR}/Overlay 
                      ${OGRE_INCLUDE_DIR}/RTShaderSystem
                      ${ROOT}/3dparty/oggsound/include
+                     ${ROOT}/io/src
                     )
 link_directories(${OGRE_LIBRARY_DIRS})
 
@@ -42,7 +43,7 @@ file( GLOB src "./src/*.cpp" )
 
 add_executable( ${proj} ${src} ${IMGUI}/imgui/imgui_demo.cpp )
 target_compile_features( ${proj} PRIVATE cxx_range_for )
-target_link_libraries( ${proj} OgreImgui Plugin_OggSound )
+target_link_libraries( ${proj} OgreImgui Plugin_OggSound io pthread )
 
 if(NOT FREETYPE_FOUND)
     set(FREETYPE_FOUND "FALSE")

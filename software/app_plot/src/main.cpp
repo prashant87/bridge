@@ -2,13 +2,17 @@
 #include <OgreApplicationContext.h>
 
 #include "ImguiManager.h"
+#include "plot_maker.h"
 
 class ImguiExample : public OgreBites::ApplicationContext, public OgreBites::InputListener
 {
 public:
+    PlotMaker plotMaker;
+    std::vector<float> data[7];
+
     void plotsWindow();
     void plotGroupCtrls( const char * title );
-    void plotGroup( const char * title, const ImVec2 & sz=ImVec2( 320, 240 ), bool sameLine=false );
+    void plotGroup( int index, const char * title, const ImVec2 & sz=ImVec2( 320, 240 ), bool sameLine=false );
 
     ImguiExample() : OgreBites::ApplicationContext("OgreImguiExample")
     {
@@ -95,10 +99,10 @@ void ImguiExample::plotsWindow()
         return;
 
     plotGroupCtrls( "Controls" );
-    plotGroup( "Plot A", ImVec2( 0, 80 ), false );
-    plotGroup( "Plot B", ImVec2( 0, 80 ), true );
-    plotGroup( "Plot C", ImVec2( 0, 80 ), false );
-    plotGroup( "Plot D", ImVec2( 0, 80 ), true );
+    plotGroup( 0, "Plot A", ImVec2( 0, 80 ), false );
+    plotGroup( 1, "Plot B", ImVec2( 0, 80 ), true );
+    plotGroup( 2, "Plot C", ImVec2( 0, 80 ), false );
+    plotGroup( 3, "Plot D", ImVec2( 0, 80 ), true );
 
     ImGui::End();
 }
@@ -112,7 +116,7 @@ void ImguiExample::plotGroupCtrls( const char * title )
     ImGui::EndGroup();
 }
 
-void ImguiExample::plotGroup( const char * title, const ImVec2 & sz, bool sameLine )
+void ImguiExample::plotGroup( int index, const char * title, const ImVec2 & sz, bool sameLine )
 {
     //if ( sameLine )
     //    ImGui::SameLine();
@@ -121,8 +125,11 @@ void ImguiExample::plotGroup( const char * title, const ImVec2 & sz, bool sameLi
 
     //ImGui::BeginGroup();
     {
-        static float arr[] = { 0.6f, 0.1f, 1.0f, 0.5f, 0.92f, 0.1f, 0.2f };
-        ImGui::PlotLines( "Curve", arr, IM_ARRAYSIZE(arr), 0, "avg 0.0", -1.0f, 1.0f, sz );
+        std::vector<float> & data = this->data[index];
+        plotMaker.array( index, data );
+        float * arr = data.data();
+        const int qty = data.size();
+        ImGui::PlotLines( "Curve", arr, qty, 0, "avg 0.0", -0.0f, 4095.0f, sz );
     }
     //ImGui::EndGroup();
 
