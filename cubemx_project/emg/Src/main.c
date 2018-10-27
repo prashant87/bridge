@@ -245,7 +245,7 @@ static void MX_ADC1_Init(void)
   hadc1.Init.ExternalTrigConv = ADC_SOFTWARE_START;
   hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
   hadc1.Init.NbrOfConversion = 7;
-  hadc1.Init.DMAContinuousRequests = DISABLE;
+  hadc1.Init.DMAContinuousRequests = ENABLE;
   hadc1.Init.EOCSelection = ADC_EOC_SEQ_CONV;
   if (HAL_ADC_Init(&hadc1) != HAL_OK)
   {
@@ -388,7 +388,7 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-
+uint16_t adc_dma_data[7];
 /* USER CODE END 4 */
 
 /* StartDefaultTask function */
@@ -398,7 +398,7 @@ void StartDefaultTask(void const * argument)
   MX_USB_DEVICE_Init();
 
   /* USER CODE BEGIN 5 */
-	if ( HAL_ADC_Start_IT( &hadc1 ) != HAL_OK )
+	if ( HAL_ADC_Start_DMA( &hadc1, (uint32_t *)adc_dma_data, 7 ) != HAL_OK )
 		Error_Handler();
 
 	#define PACKET_SZ 64
@@ -513,29 +513,39 @@ void queueInit(void)
 
 
 AdcDataT * data = 0;
-uint16_t channelIndex = 0;
 uint16_t adcValue = 0;
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* AdcHandle)
 {
+	static uint16_t d[7];
+	d[0] = adc_dma_data[0];
+	d[1] = adc_dma_data[1];
+	d[2] = adc_dma_data[2];
+	d[3] = adc_dma_data[3];
+	d[4] = adc_dma_data[4];
+	d[5] = adc_dma_data[5];
+	d[6] = adc_dma_data[6];
+
 	setLeds( 1 );
 	/* Get the converted value of regular channel */
-	adcValue = HAL_ADC_GetValue(AdcHandle);
+	//adcValue = HAL_ADC_GetValue(AdcHandle);
 
 	// Depending on what's going on actions might differ.
 	if ( data == 0 )
 		data = (AdcDataT*)osPoolAlloc( AdcDataPool );
 	if ( data )
 	{
-		data->v[channelIndex] = adcValue;
-		channelIndex += 1;
-		if ( channelIndex > 6 )
-		{
-			setLeds( 2 );
+		data->v[0] = d[0];
+		data->v[1] = d[1];
+		data->v[2] = d[2];
+		data->v[3] = d[3];
+		data->v[4] = d[4];
+		data->v[5] = d[5];
+		data->v[6] = d[6];
 
-			osMessagePut( AdcDataQueue, (uint32_t)data, 0 );
-			data = 0;
-			channelIndex = 0;
-		}
+		setLeds( 2 );
+
+		osMessagePut( AdcDataQueue, (uint32_t)data, 0 );
+		data = 0;
 	}
 
 	clrLeds( 1 );
