@@ -58,6 +58,7 @@
 
 /* Private variables ---------------------------------------------------------*/
 ADC_HandleTypeDef hadc1;
+DMA_HandleTypeDef hdma_adc1;
 
 osThreadId defaultTaskHandle;
 
@@ -69,6 +70,7 @@ osThreadId defaultTaskHandle;
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
+static void MX_DMA_Init(void);
 static void MX_ADC1_Init(void);
 void StartDefaultTask(void const * argument);
 
@@ -120,6 +122,7 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_DMA_Init();
   MX_ADC1_Init();
   /* USER CODE BEGIN 2 */
   queueInit();
@@ -238,7 +241,7 @@ static void MX_ADC1_Init(void)
   hadc1.Instance = ADC1;
   hadc1.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV4;
   hadc1.Init.Resolution = ADC_RESOLUTION_12B;
-  hadc1.Init.ScanConvMode = DISABLE;
+  hadc1.Init.ScanConvMode = ENABLE;
   hadc1.Init.ContinuousConvMode = ENABLE;
   hadc1.Init.DiscontinuousConvMode = DISABLE;
   hadc1.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
@@ -318,6 +321,21 @@ static void MX_ADC1_Init(void)
 
 }
 
+/** 
+  * Enable DMA controller clock
+  */
+static void MX_DMA_Init(void) 
+{
+  /* DMA controller clock enable */
+  __HAL_RCC_DMA2_CLK_ENABLE();
+
+  /* DMA interrupt init */
+  /* DMA2_Stream0_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA2_Stream0_IRQn, 5, 0);
+  HAL_NVIC_EnableIRQ(DMA2_Stream0_IRQn);
+
+}
+
 /** Configure pins as 
         * Analog 
         * Input 
@@ -388,7 +406,77 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-uint16_t adc_dma_data[7];
+#define ADC_DMA_BUFFER_LEN 14
+uint16_t adc_dma_buffer[ADC_DMA_BUFFER_LEN];
+void processAdcData( uint16_t * d )
+{
+	static uint16_t t[7];
+	t[0] = d[0];
+	t[1] = d[1];
+	t[2] = d[2];
+	t[3] = d[3];
+	t[4] = d[4];
+	t[5] = d[5];
+	t[6] = d[6];
+
+	setLeds( 1 );
+
+	// Depending on what's going on actions might differ.
+	AdcDataT * data = 0;
+	if ( data == 0 )
+		data = (AdcDataT*)osPoolAlloc( AdcDataPool );
+	if ( data )
+	{
+		data->v[0] = t[0];
+		data->v[1] = t[1];
+		data->v[2] = t[2];
+		data->v[3] = t[3];
+		data->v[4] = t[4];
+		data->v[5] = t[5];
+		data->v[6] = t[6];
+
+		setLeds( 2 );
+
+		osMessagePut( AdcDataQueue, (uint32_t)data, 0 );
+		data = 0;
+	}
+
+	clrLeds( 1 );
+}
+
+void queueInit(void)
+{
+    AdcDataPool  = osPoolCreate( osPool(AdcDataPool) );
+    AdcDataQueue = osMessageCreate( osMessageQ(AdcDataQueue), 0 );
+}
+
+void HAL_ADC_ConvHalfCpltCallback(ADC_HandleTypeDef* AdcHandle)
+{
+	processAdcData( adc_dma_buffer );
+}
+
+void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* AdcHandle)
+{
+	processAdcData( &(adc_dma_buffer[7]) );
+}
+
+
+
+void setLeds( uint16_t bits )
+{
+	const uint16_t pads = ( (bits & 0x0001) ? GPIO_PIN_3 : 0 ) |
+						  ( (bits & 0x0002) ? GPIO_PIN_4 : 0 ) |
+						  ( (bits & 0x0004) ? GPIO_PIN_5 : 0 );
+	HAL_GPIO_WritePin(GPIOB, pads, GPIO_PIN_SET );
+}
+
+void clrLeds( uint16_t bits )
+{
+	const uint16_t pads = ( (bits & 0x0001) ? GPIO_PIN_3 : 0 ) |
+						  ( (bits & 0x0002) ? GPIO_PIN_4 : 0 ) |
+						  ( (bits & 0x0004) ? GPIO_PIN_5 : 0 );
+	HAL_GPIO_WritePin(GPIOB, pads, GPIO_PIN_RESET );
+}
 /* USER CODE END 4 */
 
 /* StartDefaultTask function */
@@ -398,7 +486,7 @@ void StartDefaultTask(void const * argument)
   MX_USB_DEVICE_Init();
 
   /* USER CODE BEGIN 5 */
-	if ( HAL_ADC_Start_DMA( &hadc1, (uint32_t *)adc_dma_data, 7 ) != HAL_OK )
+	if ( HAL_ADC_Start_DMA( &hadc1, (uint32_t *)adc_dma_buffer, ADC_DMA_BUFFER_LEN ) != HAL_OK )
 		Error_Handler();
 
 	#define PACKET_SZ 64
@@ -504,73 +592,5 @@ void assert_failed(uint8_t* file, uint32_t line)
 /**
   * @}
   */
-
-void queueInit(void)
-{
-    AdcDataPool  = osPoolCreate( osPool(AdcDataPool) );
-    AdcDataQueue = osMessageCreate( osMessageQ(AdcDataQueue), 0 );
-}
-
-
-AdcDataT * data = 0;
-uint16_t adcValue = 0;
-void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* AdcHandle)
-{
-	static uint16_t d[7];
-	d[0] = adc_dma_data[0];
-	d[1] = adc_dma_data[1];
-	d[2] = adc_dma_data[2];
-	d[3] = adc_dma_data[3];
-	d[4] = adc_dma_data[4];
-	d[5] = adc_dma_data[5];
-	d[6] = adc_dma_data[6];
-
-	setLeds( 1 );
-	/* Get the converted value of regular channel */
-	//adcValue = HAL_ADC_GetValue(AdcHandle);
-
-	// Depending on what's going on actions might differ.
-	if ( data == 0 )
-		data = (AdcDataT*)osPoolAlloc( AdcDataPool );
-	if ( data )
-	{
-		data->v[0] = d[0];
-		data->v[1] = d[1];
-		data->v[2] = d[2];
-		data->v[3] = d[3];
-		data->v[4] = d[4];
-		data->v[5] = d[5];
-		data->v[6] = d[6];
-
-		setLeds( 2 );
-
-		osMessagePut( AdcDataQueue, (uint32_t)data, 0 );
-		data = 0;
-	}
-
-	clrLeds( 1 );
-}
-
-
-
-void setLeds( uint16_t bits )
-{
-	const uint16_t pads = ( (bits & 0x0001) ? GPIO_PIN_3 : 0 ) |
-						  ( (bits & 0x0002) ? GPIO_PIN_4 : 0 ) |
-						  ( (bits & 0x0004) ? GPIO_PIN_5 : 0 );
-	HAL_GPIO_WritePin(GPIOB, pads, GPIO_PIN_SET );
-}
-
-void clrLeds( uint16_t bits )
-{
-	const uint16_t pads = ( (bits & 0x0001) ? GPIO_PIN_3 : 0 ) |
-						  ( (bits & 0x0002) ? GPIO_PIN_4 : 0 ) |
-						  ( (bits & 0x0004) ? GPIO_PIN_5 : 0 );
-	HAL_GPIO_WritePin(GPIOB, pads, GPIO_PIN_RESET );
-}
-
-
-
-
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
