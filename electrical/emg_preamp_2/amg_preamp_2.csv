@@ -1,0 +1,14 @@
+"Id";"Designator";"Package";"Quantity";"Designation";"Supplier and ref";
+1;"U1,U2,U3";"TSOT-23-5";3;"ad8603";;;
+2;"C1,C6";"C_0603_1608Metric";2;"4u7";;;
+3;"C2,C3,C4,C5,C7,C8,C9,C10";"C_0603_1608Metric";8;"2n2";;;
+4;"C11,C12";"C_0603_1608Metric";2;"100n";;;
+5;"J1";"PinHeader_1x01_P1.27mm_Vertical";1;"CONN_01X01";;;
+6;"J2";"TestPoint_Pad_D1.0mm";1;"test";;;
+7;"J3";"PinHeader_1x05_P1.27mm_Vertical";1;"Conn_01x05";;;
+8;"R1";"R_0603_1608Metric";1;"1k5 1%";;;
+9;"R2,R9";"R_0603_1608Metric";2;"1M 1%";;;
+10;"R3,R10";"R_0603_1608Metric";2;"100R 1%";;;
+11;"R4,R5,R7,R8,R12,R13";"R_0603_1608Metric";6;"3R";;;
+12;"R6,R11";"R_0603_1608Metric";2;"100k 1%";;;
+13;"R14";"R_0603_1608Metric";1;"1k 1%";;;
