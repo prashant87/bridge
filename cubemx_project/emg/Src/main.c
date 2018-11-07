@@ -259,7 +259,7 @@ static void MX_ADC1_Init(void)
     */
   sConfig.Channel = ADC_CHANNEL_0;
   sConfig.Rank = 1;
-  sConfig.SamplingTime = ADC_SAMPLETIME_480CYCLES;
+  sConfig.SamplingTime = ADC_SAMPLETIME_84CYCLES;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
     _Error_Handler(__FILE__, __LINE__);
@@ -494,34 +494,62 @@ void StartDefaultTask(void const * argument)
 	static osEvent evt;
 	static unsigned char packet[PACKET_SZ];
 	const int bytesPerMsg = sizeof(AdcDataT);
+
+	static const int QTY = 348;
 	static int msgsQty = 0;
+
+	static uint32_t accum[7];
+	accum[0] = accum[1] =
+	accum[2] = accum[3] =
+	accum[4] = accum[5] =
+	accum[6] = 0;
+
+
     /* Infinite loop */
     for(;;)
     {
     	evt = osMessageGet( AdcDataQueue, 1 );
-    	if ( evt.status == osEventMessage )
+    	if ( evt.status & osEventMessage )
     	{
     		clrLeds( 2 );
 
     		AdcDataT * data = (AdcDataT *)evt.value.p;
     		// Add it to the array to be sent.
-    		int ind = msgsQty*bytesPerMsg;
-    		unsigned char * d = (unsigned char *)(data->v);
-    		for ( int i=0; i<bytesPerMsg; i++ )
-    			packet[ind++] = d[i];
-    		osPoolFree( AdcDataPool, (void *)data );
+    		accum[0] += data->v[0];
+    		accum[1] += data->v[1];
+    		accum[2] += data->v[2];
+    		accum[3] += data->v[3];
+    		accum[4] += data->v[4];
+    		accum[5] += data->v[5];
+    		accum[6] += data->v[6];
     		msgsQty += 1;
+    		osPoolFree( AdcDataPool, (void *)data );
     	}
-    	const int timeout = (evt.status == osEventTimeout);
+    	//const int timeout = (evt.status & osEventTimeout);
 
-    	if ( ( msgsQty >= MSGS_QTY ) ||
-    	     ( timeout && ( msgsQty > 0 ) ) )
+    	if ( msgsQty >= QTY )
     	{
     		setLeds( 4 );
+    		static AdcDataT data;
+    		data.v[0] = accum[0] * 16 / msgsQty;
+    		data.v[1] = accum[1] * 16 / msgsQty;
+    		data.v[2] = accum[2] * 16 / msgsQty;
+    		data.v[3] = accum[3] * 16 / msgsQty;
+    		data.v[4] = accum[4] * 16 / msgsQty;
+    		data.v[5] = accum[5] * 16 / msgsQty;
+    		data.v[6] = accum[6] * 16 / msgsQty;
     		// Send through USB. And zero messages qty.
-    		const int len = msgsQty * bytesPerMsg;
+    		unsigned char * d = (unsigned char *)(data.v);
+    		for ( int i=0; i<bytesPerMsg; i++ )
+    			packet[i] = d[i];
+    		const int len = bytesPerMsg;
     		CDC_Transmit_HS( packet, len );
+
     		msgsQty = 0;
+    		accum[0] = accum[1] =
+    		accum[2] = accum[3] =
+    		accum[4] = accum[5] =
+    		accum[6] = 0;
 
     		clrLeds( 4 );
     	}
