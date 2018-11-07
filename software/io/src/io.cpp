@@ -6,7 +6,7 @@
 #define PRODUCT_ID 0x5740
 
 #define EP_IN 0x81
-#define TIMEOUT 10
+#define TIMEOUT 50
 #define RETRIES 10
 
 class Io::PD
