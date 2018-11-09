@@ -103,6 +103,9 @@ void ImguiExample::plotsWindow()
     plotGroup( 1, "Plot B", ImVec2( 0, 80 ), true );
     plotGroup( 2, "Plot C", ImVec2( 0, 80 ), false );
     plotGroup( 3, "Plot D", ImVec2( 0, 80 ), true );
+    plotGroup( 4, "Plot E", ImVec2( 0, 80 ), true );
+    plotGroup( 5, "Plot F", ImVec2( 0, 80 ), true );
+    plotGroup( 6, "Plot G", ImVec2( 0, 80 ), true );
 
     ImGui::End();
 }
@@ -118,18 +121,35 @@ void ImguiExample::plotGroupCtrls( const char * title )
 
 void ImguiExample::plotGroup( int index, const char * title, const ImVec2 & sz, bool sameLine )
 {
+    ImGui::BeginGroup();
+        ImGui::PushID( index );
+        if ( ImGui::Button( "up" ) )
+            plotMaker.moveUp( index );
+        ImGui::SameLine();
+        if ( ImGui::Button( "+" ) )
+            plotMaker.zoomIn( index );
+        if ( ImGui::Button( "down" ) )
+            plotMaker.moveDown( index );
+        ImGui::SameLine();
+        if ( ImGui::Button( "-" ) )
+            plotMaker.zoomOut( index );
+        ImGui::PopID();
+    ImGui::EndGroup();
     //if ( sameLine )
     //    ImGui::SameLine();
 
+    ImGui::SameLine();
     ImGui::SetNextWindowSizeConstraints( ImVec2(0, 0), sz );
 
     //ImGui::BeginGroup();
     {
+        float vmin, vmax;
+        plotMaker.limits( index, vmin, vmax );
         std::vector<float> & data = this->data[index];
         plotMaker.array( index, data );
         float * arr = data.data();
         const int qty = data.size();
-        ImGui::PlotLines( "Curve", arr, qty, 0, "avg 0.0", -0.0f, 4095.0f, sz );
+        ImGui::PlotLines( "Curve", arr, qty, 0, title, vmin, vmax, sz );
     }
     //ImGui::EndGroup();
 

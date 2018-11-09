@@ -3,7 +3,14 @@
 
 PlotMaker::PlotMaker()
 {
-    setLength( 1024 );
+    setLength( 256 );
+
+    for ( int i=0; i<PLOT_QTY; i++ )
+    {
+        PlotData & d = data[i];
+        d.vmin = 32767.0f - 1000.0f;
+        d.vmax = 32767.0f + 1000.0f;
+    }
 
     terminated = false;
     th = std::thread( &PlotMaker::process, this );
@@ -34,6 +41,48 @@ void PlotMaker::array( int index, std::vector<float> & data )
     std::lock_guard<std::mutex> g( mutex );
         data = this->data[index].data;
 }
+
+void PlotMaker::limits( int index, float & vmin, float & vmax )
+{
+    const PlotData & d = this->data[index];
+    vmin = d.vmin;
+    vmax = d.vmax;
+}
+
+void PlotMaker::moveUp( int index, float percent )
+{
+    PlotData & d = this->data[index];
+    const float dv = (d.vmax - d.vmin) * percent / 100.0f;
+    d.vmax += dv;
+    d.vmin += dv;
+}
+
+void PlotMaker::moveDown( int index, float percent )
+{
+    PlotData & d = this->data[index];
+    const float dv = (d.vmax - d.vmin) * percent / 100.0f;
+    d.vmax -= dv;
+    d.vmin -= dv;
+}
+
+void PlotMaker::zoomIn( int index, float percent )
+{
+    PlotData & d = this->data[index];
+    const float mv = (d.vmax + d.vmin) * 0.5f;
+    const float dv = (d.vmax - d.vmin) * (100.0f - percent) / 100.0f * 0.5f;
+    d.vmax = mv + dv;
+    d.vmin = mv - dv;
+}
+
+void PlotMaker::zoomOut( int index, float percent )
+{
+    PlotData & d = this->data[index];
+    const float mv = (d.vmax + d.vmin) * 0.5f;
+    const float dv = (d.vmax - d.vmin) * (100.0f + percent) / 100.0f * 0.5f;
+    d.vmax = mv + dv;
+    d.vmin = mv - dv;
+}
+
 
 void PlotMaker::process()
 {

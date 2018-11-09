@@ -15,6 +15,7 @@ const int PLOT_QTY = 7;
 struct PlotData
 {
     std::vector<float> data;
+    float vmin, vmax;
     int currentIndex;
 };
 
@@ -26,6 +27,12 @@ public:
 
     void setLength( int qty );
     void array( int index, std::vector<float> & data );
+    void limits( int index, float & vmin, float & vmax );
+
+    void moveUp( int index, float percent = 20.0 );
+    void moveDown( int index, float percent = 20.0 );
+    void zoomIn( int index, float percent = 20.0 );
+    void zoomOut( int index, float percent = 20.0 );
 
 private:
     void process();
