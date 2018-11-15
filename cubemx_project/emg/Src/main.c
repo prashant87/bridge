@@ -495,7 +495,7 @@ void StartDefaultTask(void const * argument)
 	static unsigned char packet[PACKET_SZ];
 	const int bytesPerMsg = sizeof(AdcDataT);
 
-	static const int QTY = 348;
+	static const int QTY = 18; //348;
 	static int msgsQty = 0;
 
 	static uint32_t accum[7];

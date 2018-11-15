@@ -3,7 +3,7 @@
 
 PlotMaker::PlotMaker()
 {
-    setLength( 256 );
+    setLength( 2048 );
 
     for ( int i=0; i<PLOT_QTY; i++ )
     {
