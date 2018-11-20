@@ -2864,4 +2864,42 @@ Wire Wire Line
 Wire Wire Line
 	19475 1400 19575 1400
 Connection ~ 19475 1300
+Wire Notes Line
+	17175 4100 17475 4350
+Wire Notes Line
+	17250 4375 17425 4100
+Wire Notes Line
+	17150 5975 17500 6300
+Wire Notes Line
+	17175 6325 17425 6000
+Wire Notes Line
+	17225 8350 17450 7875
+Wire Notes Line
+	17200 7900 17475 8350
+Wire Notes Line
+	23600 2125 23825 2375
+Wire Notes Line
+	23600 2350 23825 2100
+Wire Notes Line
+	23550 4475 23825 4000
+Wire Notes Line
+	23500 4025 23825 4450
+Wire Notes Line
+	23600 6000 23850 6325
+Wire Notes Line
+	23600 6325 23800 6000
+Wire Notes Line
+	23550 8275 23800 7900
+Wire Notes Line
+	23575 7925 23825 8275
+Wire Notes Line
+	8600 7150 7500 7875
+Wire Notes Line
+	7500 7875 8675 7375
+Text Notes 7225 8100 0    60   ~ 0
+Need to be \nswapped
+Wire Notes Line
+	17275 8800 17850 11400
+Text Notes 17250 11775 0    60   ~ 0
+For all opamps no amplification \nto not disturb Vref. \n(Or need to make separate Vref \nsource for each amplifier)
 $EndSCHEMATC
