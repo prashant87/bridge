@@ -795,4 +795,22 @@ Wire Wire Line
 	9225 4725 9225 4550
 Wire Wire Line
 	9225 5225 9225 5025
+Wire Notes Line
+	2550 3925 1850 3600
+Text Notes 1675 3575 0    60   ~ 0
+3kOhm
+Wire Notes Line
+	7125 4025 6525 5025
+Text Notes 6225 5250 0    60   ~ 0
+100 Ohm in series \nwith 4u7\n
+Wire Notes Line
+	7950 5000 7700 5625
+Text Notes 7625 5725 0    60   ~ 0
+2n2
+Text Notes 9300 3475 0    60   ~ 0
+2 x 4u7 in \nparallel
+Wire Notes Line
+	10725 4050 10700 4850
+Text Notes 9975 5050 0    60   ~ 0
+Take Vref from a different board \nthrough 100 Ohm resistor.
 $EndSCHEMATC
