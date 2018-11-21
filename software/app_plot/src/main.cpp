@@ -139,7 +139,7 @@ void ImguiExample::plotGroup( int index, const char * title, const ImVec2 & sz, 
     //    ImGui::SameLine();
 
     ImGui::SameLine();
-    ImGui::SetNextWindowSizeConstraints( ImVec2(0, 0), sz );
+    //ImGui::SetNextWindowSizeConstraints( ImVec2(0, 0), sz );
 
     //ImGui::BeginGroup();
     {
@@ -149,7 +149,7 @@ void ImguiExample::plotGroup( int index, const char * title, const ImVec2 & sz, 
         plotMaker.array( index, data );
         float * arr = data.data();
         const int qty = data.size();
-        ImGui::PlotLines( "Curve", arr, qty, 0, title, vmin, vmax, sz );
+        ImGui::PlotLines( title, arr, qty, 0, title, vmin, vmax, sz );
     }
     //ImGui::EndGroup();
 

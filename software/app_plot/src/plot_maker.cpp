@@ -8,8 +8,8 @@ PlotMaker::PlotMaker()
     for ( int i=0; i<PLOT_QTY; i++ )
     {
         PlotData & d = data[i];
-        d.vmin = 32767.0f - 1000.0f;
-        d.vmax = 32767.0f + 1000.0f;
+        d.vmin = 32767.0f - 32767.0f;
+        d.vmax = 32767.0f + 32767.0f;
     }
 
     terminated = false;
