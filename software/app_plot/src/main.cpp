@@ -149,7 +149,7 @@ void ImguiExample::plotGroup( int index, const char * title, const ImVec2 & sz, 
         plotMaker.array( index, data );
         float * arr = data.data();
         const int qty = data.size();
-        ImGui::PlotLines( title, arr, qty, 0, title, vmin, vmax, sz );
+        ImGui::PlotLines( "", arr, qty, 0, title, vmin, vmax, sz );
     }
     //ImGui::EndGroup();
 
