@@ -17,6 +17,16 @@ struct PlotData
     std::vector<float> data;
     float vmin, vmax;
     int currentIndex;
+
+    // For analysis.
+    float alpha;
+    float mean;
+    float std;
+    std::vector<float> dataStd;
+
+    void init();
+    void setLength( int qty );
+    void push( unsigned short v );
 };
 
 class PlotMaker
@@ -27,6 +37,7 @@ public:
 
     void setLength( int qty );
     void array( int index, std::vector<float> & data );
+    void arrayStd( int index, std::vector<float> & dataStd );
     void limits( int index, float & vmin, float & vmax );
 
     void moveUp( int index, float percent = 20.0 );

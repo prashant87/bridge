@@ -14,6 +14,10 @@ public:
     void plotGroupCtrls( const char * title );
     void plotGroup( int index, const char * title, const ImVec2 & sz=ImVec2( 320, 240 ), bool sameLine=false );
 
+    void plotsStdWindow();
+    void plotStdGroupCtrls( const char * title );
+    void plotStdGroup( int index, const char * title, const ImVec2 & sz=ImVec2( 320, 240 ), bool sameLine=false );
+
     ImguiExample() : OgreBites::ApplicationContext("OgreImguiExample")
     {
     }
@@ -28,6 +32,7 @@ public:
 
         ImGui::ShowTestWindow();
         plotsWindow();
+        plotsStdWindow();
 
         return true;
     }
@@ -95,18 +100,17 @@ int main(int argc, char *argv[])
 
 void ImguiExample::plotsWindow()
 {
-    if ( !ImGui::Begin( "Plots", 0 ) )
-        return;
-
-    plotGroupCtrls( "Controls" );
-    plotGroup( 0, "Plot A", ImVec2(0, 180), false );
-    plotGroup( 1, "Plot B", ImVec2(0, 180), true );
-    plotGroup( 2, "Plot C", ImVec2(0, 180), false );
-    plotGroup( 3, "Plot D", ImVec2( 0, 180 ), true );
-    plotGroup( 4, "Plot E", ImVec2( 0, 180 ), true );
-    plotGroup( 5, "Plot F", ImVec2( 0, 180 ), true );
-    plotGroup( 6, "Plot G", ImVec2( 0, 180 ), true );
-
+    if ( ImGui::Begin( "Plots", 0 ) )
+    {
+        plotGroupCtrls( "Controls" );
+        plotGroup( 0, "Plot A", ImVec2(0, 180), false );
+        plotGroup( 1, "Plot B", ImVec2(0, 180), true );
+        plotGroup( 2, "Plot C", ImVec2(0, 180), false );
+        plotGroup( 3, "Plot D", ImVec2( 0, 180 ), true );
+        plotGroup( 4, "Plot E", ImVec2( 0, 180 ), true );
+        plotGroup( 5, "Plot F", ImVec2( 0, 180 ), true );
+        plotGroup( 6, "Plot G", ImVec2( 0, 180 ), true );
+    }
     ImGui::End();
 }
 
@@ -162,4 +166,71 @@ void ImguiExample::plotGroup( int index, const char * title, const ImVec2 & sz, 
         ImGui::EndTooltip();
     }
 }
+
+void ImguiExample::plotsStdWindow()
+{
+    if ( ImGui::Begin( "Plots std", 0 ) )
+    {
+        plotGroupCtrls( "Controls" );
+        plotStdGroup( 0, "Plot std A", ImVec2(0, 180), false );
+        plotStdGroup( 1, "Plot std B", ImVec2(0, 180), true );
+        plotStdGroup( 2, "Plot std C", ImVec2(0, 180), false );
+        plotStdGroup( 3, "Plot std D", ImVec2( 0, 180 ), true );
+        plotStdGroup( 4, "Plot std E", ImVec2( 0, 180 ), true );
+        plotStdGroup( 5, "Plot std F", ImVec2( 0, 180 ), true );
+        plotStdGroup( 6, "Plot std G", ImVec2( 0, 180 ), true );
+    }
+
+    ImGui::End();
+}
+
+void ImguiExample::plotStdGroupCtrls( const char * title )
+{
+
+}
+
+void ImguiExample::plotStdGroup( int index, const char * title, const ImVec2 & sz, bool sameLine )
+{
+    ImGui::BeginGroup();
+        ImGui::PushID( index + 7 );
+        if ( ImGui::Button( "up" ) )
+            plotMaker.moveUp( index );
+        ImGui::SameLine();
+        if ( ImGui::Button( "+" ) )
+            plotMaker.zoomIn( index );
+        if ( ImGui::Button( "down" ) )
+            plotMaker.moveDown( index );
+        ImGui::SameLine();
+        if ( ImGui::Button( "-" ) )
+            plotMaker.zoomOut( index );
+        ImGui::PopID();
+    ImGui::EndGroup();
+    //if ( sameLine )
+    //    ImGui::SameLine();
+
+    ImGui::SameLine();
+    //ImGui::SetNextWindowSizeConstraints( ImVec2(0, 0), sz );
+
+    //ImGui::BeginGroup();
+    {
+        float vmin, vmax;
+        plotMaker.limits( index, vmin, vmax );
+        std::vector<float> & data = this->data[index];
+        plotMaker.array( index, data );
+        float * arr = data.data();
+        const int qty = data.size();
+        ImGui::PlotLines( "", arr, qty, 0, title, vmin, vmax, sz );
+    }
+    //ImGui::EndGroup();
+
+    if ( ImGui::IsItemHovered() )
+    {
+        ImGui::BeginTooltip();
+        {
+            ImGui::TextUnformatted( title );
+        }
+        ImGui::EndTooltip();
+    }
+}
+
 

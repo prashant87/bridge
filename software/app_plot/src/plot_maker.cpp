@@ -1,15 +1,55 @@
 
 #include "plot_maker.h"
+#include <cmath>
+
+void PlotData::init()
+{
+    alpha = 0.01;
+    mean  = 0.0f;
+    std   = 0.0f;
+    setLength( 2048 );
+    vmin = 32767.0f - 32767.0f;
+    vmax = 32767.0f + 32767.0f;
+}
+
+void PlotData::setLength( int qty )
+{
+    PlotData & d = *this;
+    d.currentIndex = 0;
+    d.data.resize( qty );
+    d.dataStd.resize( qty );
+    for ( int j=0; j<qty; j++ )
+        d.dataStd[j] = d.data[j] = 0.0f;
+}
+
+void PlotData::push( unsigned short v )
+{
+    const int qty = static_cast<int>( data.size() );
+
+    const float f = static_cast<float>( v );
+    data[ currentIndex ] = f;
+
+    const float _1_alpha = 1.0f - alpha;
+    mean = _1_alpha*mean + alpha*f;
+    const float d = std::abs( f - mean );
+    std  = _1_alpha*std + alpha*d;
+
+    dataStd[ currentIndex ] = std;
+
+    currentIndex += 1;
+    if ( currentIndex >= qty )
+        currentIndex = 0;
+
+}
+
 
 PlotMaker::PlotMaker()
 {
-    setLength( 2048 );
 
     for ( int i=0; i<PLOT_QTY; i++ )
     {
         PlotData & d = data[i];
-        d.vmin = 32767.0f - 32767.0f;
-        d.vmax = 32767.0f + 32767.0f;
+        d.setLength( 2048 );
     }
 
     terminated = false;
@@ -40,6 +80,12 @@ void PlotMaker::array( int index, std::vector<float> & data )
 {
     std::lock_guard<std::mutex> g( mutex );
         data = this->data[index].data;
+}
+
+void PlotMaker::arrayStd( int index, std::vector<float> & dataStd )
+{
+    std::lock_guard<std::mutex> g( mutex );
+    dataStd = this->data[index].dataStd;
 }
 
 void PlotMaker::limits( int index, float & vmin, float & vmax )
@@ -106,10 +152,11 @@ void PlotMaker::process()
                 for ( int i=0; i<PLOT_QTY; i++ )
                 {
                     PlotData & d = data[i];
-                    d.data[ d.currentIndex ] = static_cast<float>( raw_data[n].v[i] );
+                    /*d.data[ d.currentIndex ] = static_cast<float>( raw_data[n].v[i] );
                     d.currentIndex += 1;
                     if ( d.currentIndex >= this->qty )
-                        d.currentIndex = 0;
+                        d.currentIndex = 0;*/
+                    d.push( raw_data[n].v[i] );
                 }
             }
     }
