@@ -81,6 +81,8 @@ int main( int argc, char * argv[] )
     const ALuint frequency = 22050;
     const ALenum format = AL_FORMAT_MONO16;
 
+    ALvoid * pData;
+
 
     // Fill all the buffers with audio data from the wave file
     for ( int iLoop = 0; iLoop < 4; iLoop++ )
@@ -117,13 +119,13 @@ int main( int argc, char * argv[] )
        while (iBuffersProcessed)
        {
           // Remove the buffer from the queue (uiBuffer contains the buffer ID for the dequeued buffer)
-          uiBuffer = 0;
+          ALuint uiBuffer = 0;
           alSourceUnqueueBuffers(source, 1, &uiBuffer);
 
           // Read more pData audio data (if there is any)
 
           // Copy audio data to buffer
-          alBufferData(uiBuffer, AL_FORMAT_MONO16, pData, DATA_CHUNK_SIZE, 22050);
+          alBufferData( uiBuffer, format, pData, DATA_CHUNK_SIZE, frequency );
           // Insert the audio buffer to the source queue
           alSourceQueueBuffers(source, 1, &uiBuffer);
 
