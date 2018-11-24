@@ -30,6 +30,7 @@ add_subdirectory( "./app_plot" )
 add_subdirectory( "./io" )
 add_subdirectory( "./test_app" )
 add_subdirectory( "./test_gp" )
+add_subdirectory( "./test_al" )
 
 
 
