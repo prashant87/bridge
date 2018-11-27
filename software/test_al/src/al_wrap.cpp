@@ -5,6 +5,7 @@
 #include <mutex>
 #include <thread>
 #include <chrono>
+#include <functional>
 
 #include <AL/al.h>
 #include <AL/alc.h>
@@ -16,10 +17,10 @@ class AlWrap::PD
 public:
     bool initialized;
     bool terminated;
-    std::vector<AtStream *> streams;
+    std::vector<AlStream *> streams;
 
-    ALCdevice * device;
-    ALContext * context;
+    ALCdevice  * device;
+    ALCcontext * context;
     ALuint frequency; // = 22050;
     ALenum format;    // = AL_FORMAT_MONO16;
     ALuint bufferSz;
@@ -48,7 +49,7 @@ AlWrap::PD::PD()
 AlWrap::PD::~PD()
 {
     // Remove all streams.
-    for ( std::vector<AlStream>::const_iterator it=streams.begin();
+    for ( std::vector<AlStream *>::const_iterator it=streams.begin();
           it!=streams.end(); it++ )
     {
         AlStream * stream = *it;
@@ -69,6 +70,8 @@ AlWrap::PD::~PD()
 AlWrap::AlWrap()
 {
     pd = new PD();
+    pd->initialized = init();
+    pd->th = std::thread( std::bind( &AlWrap::process, this ) );
 }
 
 AlWrap::~AlWrap()
@@ -80,20 +83,23 @@ AlWrap::~AlWrap()
 
 AlStream * AlWrap::createStream( StreamData * data )
 {
-    std::lock_guard lg( pd->mutex );
+    std::lock_guard<std::mutex> lg( pd->mutex );
+        AlStream * st = new AlStream( pd->frequency, pd->format, pd->buffersQty, pd->bufferSz, data );
+        pd->streams.push_back( st );
         return 0;
 }
 
-void AlStream::removeStream( AlStream * stream )
+void AlWrap::removeStream( AlStream * stream )
 {
-    std::lock_guard lg( pd->mutex );
-        for ( std::vector<AlStream>::const_iterator it=streams.begin();
-              it!=streams.end(); it++ )
+    std::lock_guard<std::mutex> lg( pd->mutex );
+        for ( std::vector<AlStream *>::const_iterator it=pd->streams.begin();
+              it!=pd->streams.end(); it++ )
         {
             AlStream * st = *it;
             if ( stream == st )
             {
-                streams.erase( it );
+                pd->streams.erase( it );
+                delete st;
                 break;
             }
         }
@@ -104,9 +110,7 @@ bool AlWrap::init()
     // Verify that a given extension is available for the current context
     ALCboolean enumeration = alcIsExtensionPresent(NULL, "ALC_ENUMERATION_EXT");
     if (enumeration == AL_FALSE)
-    {
-       return -1;
-    }
+       return false;
 
     // Retrieve a list of available devices
     // Each device name is separated by a single NULL character
@@ -118,12 +122,12 @@ bool AlWrap::init()
 
     // Open the default device
     pd->device = alcOpenDevice(defaultDeviceName);
-    if ( !device )
+    if ( !pd->device )
         return false;
 
     // Create context
-    pd->context = alcCreateContext( device, 0 );
-    if ( context == 0 )
+    pd->context = alcCreateContext( pd->device, 0 );
+    if ( pd->context == 0 )
     {
         alcCloseDevice( pd->device );
         pd->device = 0;
@@ -141,24 +145,25 @@ bool AlWrap::init()
        return false;
     }
 
+    return true;
 }
 
 void AlWrap::process()
 {
     const int DELAY_MS = 5;
     std::vector<AlStream *> streams;
-    while ( !terminated )
+    while ( !pd->terminated )
     {
         std::this_thread::sleep_for( std::chrono::milliseconds( DELAY_MS ) );
         // Copy list of sound streams in protected environment.
-        std::lock_guard lg( pd->mutex );
+        std::lock_guard<std::mutex> lg( pd->mutex );
             streams = pd->streams;
             // Parse each one and play it.
-            for ( std::vector<AlStream>::const_iterator it=streams.begin();
+            for ( std::vector<AlStream *>::const_iterator it=streams.begin();
                   it!=streams.end(); it++ )
             {
                 AlStream * stream = *it;
-                //stream->play();
+                stream->processBuffers();
             }
     }
 }
