@@ -155,6 +155,36 @@ bool PlotMaker::samples( std::vector<unsigned short> & data )
         return true;
 }
 
+void PlotMaker::classificationSample( int rawQty, int stdQty, int step, std::vector<float> & data )
+{
+    const int CHANNELS_QTY = 3;
+    const int CHANNELS[] = { 3, 4, 5 };
+    const int qty = CHANNELS_QTY*(rawQty + stdQty);
+    data.resize( qty );
+    int destInd = 0;
+    for ( int i=0; i<CHANNELS_QTY; i++ )
+    {
+        PlotData & d = this->data[i];
+        const int qty = (int)d.data.size();
+        for ( int j=0; j<rawQty; j++ )
+        {
+            int ind = d.currentIndex - step*j;
+            if ( ind < 0 )
+                ind += qty;
+            const float v = d.data[ind] / 65535.0;
+            data[destInd++] = v;
+        }
+        for ( int j=0; j<stdQty; j++ )
+        {
+            int ind = d.currentIndex - step*j;
+            if ( ind < 0 )
+                ind += qty;
+            const float v = d.dataStd[ind] / 65535.0;
+            data[destInd++] = v;
+        }
+    }
+}
+
 
 void PlotMaker::process()
 {

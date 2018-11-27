@@ -53,6 +53,8 @@ public:
     void setAudioSource( int ind );
     bool samples(std::vector<unsigned short> & data ) override;
 
+    void classificationSample( int rawQty, int stdQty, int step, std::vector<float> & data );
+
 private:
     void process();
 

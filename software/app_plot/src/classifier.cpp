@@ -2,8 +2,13 @@
 #include "classifier.h"
 #include "gaussian_process_regression.h"
 
-const int INPUTS  = 10;
+// Right now have 3 channels. So "INPUTS" value should be a multiple of 3.
+const int CHANNELS = 3;
+const int RAW_READINGS_QTY = 5;
+const int STD_READINGS_QTY = 5;
+const int INPUTS  = CHANNELS*(RAW_READINGS_QTY + STD_READINGS_QTY);
 const int OUTPUTS = 1;
+const int STEP_SIZE = 10;
 
 typedef Eigen::Matrix<float, INPUTS, 1>  IN;
 typedef Eigen::Matrix<float, OUTPUTS, 1> OUT;
@@ -55,6 +60,13 @@ Classifier::Classifier()
 Classifier::~Classifier()
 {
     delete pd;
+}
+
+void Classifier::dimensions( int & rawQty, int stdQty, int & step )
+{
+    rawQty = RAW_READINGS_QTY;
+    stdQty = STD_READINGS_QTY;
+    step   = STEP_SIZE;
 }
 
 void Classifier::setCategories( int categories )
