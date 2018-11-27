@@ -1,15 +1,11 @@
 
 set( proj gui )
 
+find_package( OpenAL  REQUIRED )
+find_package( Threads REQUIRED )
 
-set( LBASE ${OGRE_HOME}/lib )
-set( libs ${LBASE}/libOgreMain.so 
-          ${LBASE}/libOgreBites.so 
-          ${LBASE}/libOgreOverlay.so 
-          ${LBASE}/libOgrePaging.so 
-          ${LBASE}/libOgreProperty.so 
-          ${LBASE}/libOgreRTShaderSystem.so 
-          ${LBASE}/libOgreTerrain.so 
+set( libs ${OPENAL_LIBRARIES}
+          ${CMAKE_THREAD_LIBS_INIT}
           )
 
 # the search paths
@@ -18,6 +14,7 @@ include_directories( ${OGRE_INCLUDE_DIRS}
                      ${OGRE_INCLUDE_DIR}/Bites 
                      ${OGRE_INCLUDE_DIR}/Overlay 
                      ${OGRE_INCLUDE_DIR}/RTShaderSystem
+                     ${OPENAL_INCLUDE_DIRS}
                      ${ROOT}/io/src
                     )
 link_directories(${OGRE_LIBRARY_DIRS})
@@ -42,7 +39,7 @@ file( GLOB src "./src/*.cpp" )
 
 add_executable( ${proj} ${src} ${IMGUI}/imgui/imgui_demo.cpp )
 target_compile_features( ${proj} PRIVATE cxx_range_for )
-target_link_libraries( ${proj} OgreImgui io pthread )
+target_link_libraries( ${proj} OgreImgui io pthread ${libs} )
 
 if(NOT FREETYPE_FOUND)
     set(FREETYPE_FOUND "FALSE")

@@ -16,10 +16,15 @@ void PlotData::setLength( int qty )
 {
     PlotData & d = *this;
     d.currentIndex = 0;
+    d.lastSoundIndex = 0;
     d.data.resize( qty );
     d.dataStd.resize( qty );
+    d.dataAudio.resize( qty );
     for ( int j=0; j<qty; j++ )
+    {
         d.dataStd[j] = d.data[j] = 0.0f;
+        d.dataAudio[j] = 32767;
+    }
 }
 
 void PlotData::push( unsigned short v )
@@ -45,6 +50,7 @@ void PlotData::push( unsigned short v )
 
 PlotMaker::PlotMaker()
 {
+    audioSource = 4;
 
     for ( int i=0; i<PLOT_QTY; i++ )
     {
@@ -69,10 +75,7 @@ void PlotMaker::setLength( int qty )
         for ( int i=0; i<PLOT_QTY; i++ )
         {
             PlotData & d = data[i];
-            d.currentIndex = 0;
-            d.data.resize( qty );
-            for ( int j=0; j<qty; j++ )
-                d.data[j] = 0.0f;
+            d.setLength( qty );
         }
 }
 
@@ -127,6 +130,20 @@ void PlotMaker::zoomOut( int index, float percent )
     const float dv = (d.vmax - d.vmin) * (100.0f + percent) / 100.0f * 0.5f;
     d.vmax = mv + dv;
     d.vmin = mv - dv;
+}
+
+void PlotMaker::setAudioSource( int ind )
+{
+    audioSource = ind;
+}
+
+bool PlotMaker::samples( std::vector<unsigned int> & data )
+{
+    PlotData & d = this->data[audioIndex];
+    int qty = d.currentIndex - d.lastSoundIndex - 1;
+    if ( qty < 0 )
+        qty += (int)d.dataAudio.size();
+    return true;
 }
 
 

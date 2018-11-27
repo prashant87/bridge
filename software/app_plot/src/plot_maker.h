@@ -3,6 +3,8 @@
 #define __PLOT_MAKER_H_
 
 #include "io.h"
+#include "al_wrap.h"
+
 #include <vector>
 
 // Dirty include right into the header.
@@ -17,6 +19,7 @@ struct PlotData
     std::vector<float> data;
     float vmin, vmax;
     int currentIndex;
+    int lastSoundIndex;
 
     // For analysis.
     float alpha;
@@ -24,12 +27,14 @@ struct PlotData
     float std;
     std::vector<float> dataStd;
 
+    std::vector<unsigned short> dataAudio;
+
     void init();
     void setLength( int qty );
     void push( unsigned short v );
 };
 
-class PlotMaker
+class PlotMaker: public StreamData
 {
 public:
     PlotMaker();
@@ -45,6 +50,9 @@ public:
     void zoomIn( int index, float percent = 20.0 );
     void zoomOut( int index, float percent = 20.0 );
 
+    void setAudioSource( int ind );
+    bool samples( std::vector<unsigned int> & data ) override;
+
 private:
     void process();
 
@@ -53,6 +61,7 @@ private:
     bool terminated;
 
     int qty;
+    int audioSource;
     PlotData data[7];
 };
 
