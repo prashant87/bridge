@@ -51,7 +51,7 @@ public:
     void zoomOut( int index, float percent = 20.0 );
 
     void setAudioSource( int ind );
-    bool samples( std::vector<unsigned int> & data ) override;
+    bool samples(std::vector<unsigned short> & data ) override;
 
 private:
     void process();

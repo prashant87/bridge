@@ -49,8 +49,9 @@ void PlotData::push( unsigned short v )
 
 
 PlotMaker::PlotMaker()
+    : StreamData()
 {
-    audioSource = 4;
+    audioSource = 3;
 
     for ( int i=0; i<PLOT_QTY; i++ )
     {
@@ -137,13 +138,21 @@ void PlotMaker::setAudioSource( int ind )
     audioSource = ind;
 }
 
-bool PlotMaker::samples( std::vector<unsigned int> & data )
+bool PlotMaker::samples( std::vector<unsigned short> & data )
 {
-    PlotData & d = this->data[audioIndex];
-    int qty = d.currentIndex - d.lastSoundIndex - 1;
-    if ( qty < 0 )
-        qty += (int)d.dataAudio.size();
-    return true;
+    std::lock_guard<std::mutex> lg( mutex );
+        PlotData & d = this->data[audioSource];
+        int qty = d.currentIndex - d.lastSoundIndex;
+        if ( qty < 0 )
+            qty += (int)d.dataAudio.size();
+        data.resize( qty );
+        for ( int i=0; i<qty; i++ )
+        {
+            const int ind = d.currentIndex + i;
+            const unsigned short v = d.dataAudio[ind];
+            data[i] = v;
+        }
+        return true;
 }
 
 

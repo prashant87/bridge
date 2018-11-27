@@ -3,10 +3,12 @@
 
 #include "ImguiManager.h"
 #include "plot_maker.h"
+#include "al_wrap.h"
 
 class ImguiExample : public OgreBites::ApplicationContext, public OgreBites::InputListener
 {
 public:
+    AlWrap    alWrap;
     PlotMaker plotMaker;
     std::vector<float> data[7];
 
@@ -74,6 +76,8 @@ public:
         Ogre::Entity* ent = scnMgr->createEntity("Sinbad.mesh");
         Ogre::SceneNode* node = scnMgr->getRootSceneNode()->createChildSceneNode();
         node->attachObject(ent);
+
+        alWrap.createStream( &plotMaker );
     }
 
     bool keyPressed(const OgreBites::KeyboardEvent& evt)
@@ -137,6 +141,8 @@ void ImguiExample::plotGroup( int index, const char * title, const ImVec2 & sz, 
         ImGui::SameLine();
         if ( ImGui::Button( "-" ) )
             plotMaker.zoomOut( index );
+        if ( ImGui::Button( "|<" ) )
+            plotMaker.setAudioSource( index );
         ImGui::PopID();
     ImGui::EndGroup();
     //if ( sameLine )
