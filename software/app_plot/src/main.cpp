@@ -3,6 +3,7 @@
 
 #include "ImguiManager.h"
 #include "plot_maker.h"
+#include "classifier.h"
 #include "al_wrap.h"
 
 class ImguiExample : public OgreBites::ApplicationContext, public OgreBites::InputListener
@@ -10,7 +11,11 @@ class ImguiExample : public OgreBites::ApplicationContext, public OgreBites::Inp
 public:
     AlWrap    alWrap;
     PlotMaker plotMaker;
+    Classifier classifier;
     std::vector<float> data[7];
+    bool training;
+
+    void plotRegressionWindow();
 
     void plotsWindow();
     void plotGroupCtrls( const char * title );
@@ -22,6 +27,7 @@ public:
 
     ImguiExample() : OgreBites::ApplicationContext("OgreImguiExample")
     {
+        training = true;
     }
 
     bool frameStarted(const Ogre::FrameEvent& evt)
@@ -35,6 +41,7 @@ public:
         ImGui::ShowTestWindow();
         plotsWindow();
         plotsStdWindow();
+        plotRegressionWindow();
 
         return true;
     }
@@ -86,6 +93,18 @@ public:
         {
             getRoot()->queueEndRendering();
         }
+        if ( training )
+        {
+            if ( ( evt.keysym.sym >= '1' ) && ( evt.keysym.sym <= '3' ) )
+            {
+                int category = evt.keysym.sym - '1';
+                int rawQty, stdQty, step;
+                classifier.dimensions( rawQty, stdQty, step );
+                std::vector<float> data;
+                plotMaker.classificationSample( rawQty, stdQty, step, data );
+                classifier.push( category, data );
+            }
+        }
         return true;
     }
 };
@@ -117,6 +136,7 @@ void ImguiExample::plotsWindow()
     }
     ImGui::End();
 }
+
 
 void ImguiExample::plotGroupCtrls( const char * title )
 {
@@ -237,6 +257,32 @@ void ImguiExample::plotStdGroup( int index, const char * title, const ImVec2 & s
         }
         ImGui::EndTooltip();
     }
+}
+
+void ImguiExample::plotRegressionWindow()
+{
+    if ( ImGui::Begin( "Plots std", 0 ) )
+    {
+        ImGui::Checkbox( "Training", &training );
+        if ( training )
+        {
+            ImGui::SameLine();
+            ImGui::Text( "Use \"1\", \"2\", \"3\" buttons to add training data to a classifier" );
+        }
+        else
+        {
+            int rawQty, stdQty, step;
+            classifier.dimensions( rawQty, stdQty, step );
+            std::vector<float> data;
+            plotMaker.classificationSample( rawQty, stdQty, step, data );
+            int category = classifier.classify( data );
+
+            ImGui::Text( "Category %i", category );
+        }
+    }
+
+    ImGui::End();
+
 }
 
 
