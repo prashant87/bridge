@@ -2,7 +2,7 @@
 #define GPR_H
 
 
-#include <eigen3/Eigen/Dense>
+#include <Eigen/Dense>
 #include <iostream>
 #include <vector>
 
