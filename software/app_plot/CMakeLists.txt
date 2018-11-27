@@ -16,6 +16,8 @@ include_directories( ${OGRE_INCLUDE_DIRS}
                      ${OGRE_INCLUDE_DIR}/RTShaderSystem
                      ${OPENAL_INCLUDE_DIRS}
                      ${ROOT}/io/src
+                     ${ROOT}/3dparty/gpr/include/gaussian_process_regression
+                     ${ROOT}/3dparty/eigen3
                     )
 link_directories(${OGRE_LIBRARY_DIRS})
 
