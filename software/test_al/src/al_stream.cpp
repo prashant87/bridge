@@ -41,8 +41,8 @@ void AlStream::initBuffers()
     ALuint bufferSz = (ALuint)data.size() / buffersQty;
 
     // Initilize data to middle value (for 16 bit it is 32767).
-    size_t qty = data.size();
-    for ( size_t j=0; j<qty; j++ )
+    std::size_t qty = data.size();
+    for ( std::size_t j=0; j<qty; j++ )
         data[j] = 32767;
 
     // Fill all the buffers with audio data from the wave file
@@ -67,7 +67,8 @@ void AlStream::processBuffers()
 
     // For each processed buffer, remove it from the source queue, read the next chunk of
     // audio data from the file, fill the buffer with new data, and add it to the source queue
-    if ( buffersProcessed > 0 )
+    //if ( buffersProcessed > 0 )
+    for ( ALint k=0; k<buffersProcessed; k++  )
     {
         // Remove the buffer from the queue (uiBuffer contains the buffer ID for the dequeued buffer)
         ALuint uiBuffer = 0;

@@ -1,9 +1,13 @@
 
 #include "al_stream.h"
+#include <vector>
+#include <iostream>
 
 AlStream::AlStream( ALuint frequency, ALenum format, ALuint buffersQty, ALuint bufferSz, StreamData * streamData )
 {
     val = 0.0f;
+
+    this->freeBuffers = 0;
 
     this->streamData = streamData;
     this->frequency = frequency;
@@ -41,8 +45,8 @@ void AlStream::initBuffers()
     ALuint bufferSz = (ALuint)data.size() / buffersQty;
 
     // Initilize data to middle value (for 16 bit it is 32767).
-    size_t qty = data.size();
-    for ( size_t j=0; j<qty; j++ )
+    std::size_t qty = data.size();
+    for ( std::size_t j=0; j<qty; j++ )
         data[j] = 32767;
 
     // Fill all the buffers with audio data from the wave file
@@ -61,20 +65,21 @@ void AlStream::processBuffers()
 
     ALint buffersProcessed;
     alGetSourcei(source, AL_BUFFERS_PROCESSED, &buffersProcessed);
+    freeBuffers += buffersProcessed;
 
     //iTotalBuffersProcessed += iBuffersProcessed;
     //ALOGI("Buffers Processed %d", iTotalBuffersProcessed);
 
     // For each processed buffer, remove it from the source queue, read the next chunk of
     // audio data from the file, fill the buffer with new data, and add it to the source queue
-    if ( buffersProcessed > 0 )
+    if ( freeBuffers > 0 )
     {
         // Remove the buffer from the queue (uiBuffer contains the buffer ID for the dequeued buffer)
         ALuint uiBuffer = 0;
         alSourceUnqueueBuffers(source, 1, &uiBuffer);
 
         ALvoid * pData = 0;
-        unsigned short * usData = 0;
+        short * usData = 0;
         // Find corresponding data buffer.
         for ( ALuint i=0; i<buffersQty; i++ )
         {
@@ -94,14 +99,23 @@ void AlStream::processBuffers()
             return;
 
         const ALuint qty = (ALuint)rawData.size();
-        const float alpha = (float)qty / (float)bufferSz * 5.0;
+        float alpha = (float)qty / (float)bufferSz * 2.0f;// * 5.0;
+        if ( alpha >= 0.9f )
+            alpha = 0.9f;
         const float _1_alpha = 1.0f - alpha;
         for ( ALuint i=0; i<bufferSz; i++ )
         {
-            const ALuint rawInd = qty * i / bufferSz;
-            const float v = (float)rawData[rawInd];
-            val = alpha * v + _1_alpha * val;
-            usData[i] = (unsigned short)val;
+            if ( qty > 0 )
+            {
+                const ALuint rawInd = qty * i / bufferSz;
+                const float v = (float)rawData[rawInd] - 32767.0f;
+                val = (alpha * v + _1_alpha * val);
+                const short uv = (short)(val);
+                usData[i] = uv; // ((uv & 0x00FF) << 8) |
+                                // ((uv & 0xFF00) >> 8);
+            }
+            else
+                usData[i] = (short)0;
         }
 
         // Copy audio data to buffer
@@ -109,7 +123,16 @@ void AlStream::processBuffers()
         // Insert the audio buffer to the source queue
         alSourceQueueBuffers(source, 1, &uiBuffer);
 
-        //iBuffersProcessed--;
+        // Check if playing or not and force play if needed.
+        ALint state;
+        alGetSourcei( source, AL_SOURCE_STATE, &state );
+        if ( state != AL_PLAYING )
+            alSourcePlay( source );
+
+        // Decrease number of free buffers.
+        freeBuffers -= 1;
+
+        std::cout << "a" << std::endl;
     }
 }
 

@@ -220,15 +220,15 @@ void ImguiExample::plotStdGroup( int index, const char * title, const ImVec2 & s
     ImGui::BeginGroup();
         ImGui::PushID( index + 7 );
         if ( ImGui::Button( "up" ) )
-            plotMaker.moveUp( index );
+            plotMaker.stdMoveUp( index );
         ImGui::SameLine();
         if ( ImGui::Button( "+" ) )
-            plotMaker.zoomIn( index );
+            plotMaker.stdZoomIn( index );
         if ( ImGui::Button( "down" ) )
-            plotMaker.moveDown( index );
+            plotMaker.stdMoveDown( index );
         ImGui::SameLine();
         if ( ImGui::Button( "-" ) )
-            plotMaker.zoomOut( index );
+            plotMaker.stdZoomOut( index );
         ImGui::PopID();
     ImGui::EndGroup();
     //if ( sameLine )
@@ -240,9 +240,9 @@ void ImguiExample::plotStdGroup( int index, const char * title, const ImVec2 & s
     //ImGui::BeginGroup();
     {
         float vmin, vmax;
-        plotMaker.limits( index, vmin, vmax );
+        plotMaker.stdLimits( index, vmin, vmax );
         std::vector<float> & data = this->data[index];
-        plotMaker.array( index, data );
+        plotMaker.arrayStd( index, data );
         float * arr = data.data();
         const int qty = data.size();
         ImGui::PlotLines( "", arr, qty, 0, title, vmin, vmax, sz );

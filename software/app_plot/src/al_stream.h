@@ -23,8 +23,9 @@ public:
     ALuint source;
     ALuint frequency;
     ALenum format;
+    ALint  freeBuffers;
     std::vector<ALuint> buffers;
-    std::vector<unsigned short> data;
+    std::vector<short> data;
 
     float val;
     std::vector<unsigned short> rawData;

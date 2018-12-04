@@ -10,6 +10,9 @@ void PlotData::init()
     setLength( 2048 );
     vmin = 32767.0f - 32767.0f;
     vmax = 32767.0f + 32767.0f;
+
+    stdmin = -10.0;
+    stdmax = 8152.0;
 }
 
 void PlotData::setLength( int qty )
@@ -33,6 +36,7 @@ void PlotData::push( unsigned short v )
 
     const float f = static_cast<float>( v );
     data[ currentIndex ] = f;
+    dataAudio[ currentIndex ] = v;
 
     const float _1_alpha = 1.0f - alpha;
     mean = _1_alpha*mean + alpha*f;
@@ -56,6 +60,7 @@ PlotMaker::PlotMaker()
     for ( int i=0; i<PLOT_QTY; i++ )
     {
         PlotData & d = data[i];
+        d.init();
         d.setLength( 2048 );
     }
 
@@ -99,6 +104,13 @@ void PlotMaker::limits( int index, float & vmin, float & vmax )
     vmax = d.vmax;
 }
 
+void PlotMaker::stdLimits( int index, float & vmin, float & vmax )
+{
+    const PlotData & d = this->data[index];
+    vmin = d.stdmin;
+    vmax = d.stdmax;
+}
+
 void PlotMaker::moveUp( int index, float percent )
 {
     PlotData & d = this->data[index];
@@ -133,6 +145,41 @@ void PlotMaker::zoomOut( int index, float percent )
     d.vmin = mv - dv;
 }
 
+void PlotMaker::stdMoveUp( int index, float percent )
+{
+    PlotData & d = this->data[index];
+    const float dv = (d.stdmax - d.stdmin) * percent / 100.0f;
+    d.stdmax += dv;
+    d.stdmin += dv;
+}
+
+void PlotMaker::stdMoveDown( int index, float percent )
+{
+    PlotData & d = this->data[index];
+    const float dv = (d.stdmax - d.stdmin) * percent / 100.0f;
+    d.stdmax -= dv;
+    d.stdmin -= dv;
+}
+
+void PlotMaker::stdZoomIn( int index, float percent )
+{
+    PlotData & d = this->data[index];
+    const float mv = (d.stdmax + d.stdmin) * 0.5f;
+    const float dv = (d.stdmax - d.stdmin) * (100.0f - percent) / 100.0f * 0.5f;
+    d.stdmax = mv + dv;
+    d.stdmin = mv - dv;
+}
+
+void PlotMaker::stdZoomOut( int index, float percent )
+{
+    PlotData & d = this->data[index];
+    const float mv = (d.stdmax + d.stdmin) * 0.5f;
+    const float dv = (d.stdmax - d.stdmin) * (100.0f + percent) / 100.0f * 0.5f;
+    d.stdmax = mv + dv;
+    d.stdmin = mv - dv;
+}
+
+
 void PlotMaker::setAudioSource( int ind )
 {
     audioSource = ind;
@@ -142,16 +189,20 @@ bool PlotMaker::samples( std::vector<unsigned short> & data )
 {
     std::lock_guard<std::mutex> lg( mutex );
         PlotData & d = this->data[audioSource];
+        const int sz = d.dataAudio.size();
         int qty = d.currentIndex - d.lastSoundIndex;
         if ( qty < 0 )
-            qty += (int)d.dataAudio.size();
+            qty += sz;
         data.resize( qty );
         for ( int i=0; i<qty; i++ )
         {
-            const int ind = d.currentIndex + i;
+            int ind = d.lastSoundIndex + i;
+            if ( ind >= sz )
+                ind -= sz;
             const unsigned short v = d.dataAudio[ind];
             data[i] = v;
         }
+        d.lastSoundIndex = d.currentIndex;
         return true;
 }
 
