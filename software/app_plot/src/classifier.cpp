@@ -2,6 +2,11 @@
 #include "classifier.h"
 #include "gaussian_process_regression.h"
 
+#include "portable_iarchive.hpp"
+#include "portable_oarchive.hpp"
+#include "portable_insts.hpp"
+#include <fstream>
+
 // Right now have 3 channels. So "INPUTS" value should be a multiple of 3.
 const int CHANNELS = 3;
 const int RAW_READINGS_QTY = 5;
@@ -111,6 +116,46 @@ int  Classifier::classify( const std::vector<float> & data )
 
     return ind;
 }
+
+bool Classifier::save( const char * fname )
+{
+    bool res = true;
+    try {
+        std::ofstream out( fname );
+        eos::portable_oarchive oa( out, boost::archive::no_header );
+
+        const int qty = static_cast<int>( pd->classifiers.size() );
+        oa << qty;
+
+        for ( int i=0; i<qty; i++ )
+        {
+            OneClassifier & c = pd->classifiers[i];
+            //c.gpr.
+        }
+
+        out.flush();
+        out.close();
+    } catch(...)
+    {
+        res = false;
+    }
+    return res;
+}
+
+bool Classifier::load( const char * fname )
+{
+    bool res = true;
+    try {
+        std::ifstream in( fname );
+        eos::portable_iarchive ia( in, boost::archive::no_header );
+
+    } catch(...)
+    {
+        res = false;
+    }
+    return res;
+}
+
 
 
 

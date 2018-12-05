@@ -3,13 +3,16 @@ set( proj gui )
 
 find_package( OpenAL  REQUIRED )
 find_package( Threads REQUIRED )
+find_package( Boost COMPONENTS serialization REQUIRED )
 
 set( libs ${OPENAL_LIBRARIES}
           ${CMAKE_THREAD_LIBS_INIT}
           )
 
 # the search paths
-include_directories( ${OGRE_INCLUDE_DIRS} 
+include_directories( "./src"
+                     "./pa"
+                     ${OGRE_INCLUDE_DIRS}
                      ${OGRE_INCLUDE_DIR} 
                      ${OGRE_INCLUDE_DIR}/Bites 
                      ${OGRE_INCLUDE_DIR}/Overlay 
@@ -41,7 +44,7 @@ file( GLOB src "./src/*.cpp" )
 
 add_executable( ${proj} ${src} ${IMGUI}/imgui/imgui_demo.cpp )
 target_compile_features( ${proj} PRIVATE cxx_range_for )
-target_link_libraries( ${proj} OgreImgui io pthread ${libs} )
+target_link_libraries( ${proj} OgreImgui io pthread ${libs} ${Boost_LIBRARIES} )
 
 if(NOT FREETYPE_FOUND)
     set(FREETYPE_FOUND "FALSE")

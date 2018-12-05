@@ -20,6 +20,9 @@ public:
     void push( int category, const std::vector<float> & data );
     int  classify( const std::vector<float> & data );
 
+    bool save( const char * fname );
+    bool load( const char * fname );
+
 private:
     class PD;
     PD * pd;
