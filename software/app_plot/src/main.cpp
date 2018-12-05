@@ -80,9 +80,9 @@ public:
         camNode->attachObject(cam);
         getRenderWindow()->addViewport(cam);
 
-        Ogre::Entity* ent = scnMgr->createEntity("Sinbad.mesh");
+        /*Ogre::Entity* ent = scnMgr->createEntity("Sinbad.mesh");
         Ogre::SceneNode* node = scnMgr->getRootSceneNode()->createChildSceneNode();
-        node->attachObject(ent);
+        node->attachObject(ent);*/
 
         alWrap.createStream( &plotMaker );
     }
@@ -261,7 +261,7 @@ void ImguiExample::plotStdGroup( int index, const char * title, const ImVec2 & s
 
 void ImguiExample::plotRegressionWindow()
 {
-    if ( ImGui::Begin( "Plots std", 0 ) )
+    if ( ImGui::Begin( "Regression", 0 ) )
     {
         ImGui::Checkbox( "Training", &training );
         if ( training )

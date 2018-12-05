@@ -8,7 +8,7 @@ const int RAW_READINGS_QTY = 5;
 const int STD_READINGS_QTY = 5;
 const int INPUTS  = CHANNELS*(RAW_READINGS_QTY + STD_READINGS_QTY);
 const int OUTPUTS = 1;
-const int STEP_SIZE = 10;
+const int STEP_SIZE = 50;
 
 typedef Eigen::Matrix<float, INPUTS, 1>  IN;
 typedef Eigen::Matrix<float, OUTPUTS, 1> OUT;
@@ -62,7 +62,7 @@ Classifier::~Classifier()
     delete pd;
 }
 
-void Classifier::dimensions( int & rawQty, int stdQty, int & step )
+void Classifier::dimensions( int & rawQty, int & stdQty, int & step )
 {
     rawQty = RAW_READINGS_QTY;
     stdQty = STD_READINGS_QTY;

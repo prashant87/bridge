@@ -15,7 +15,7 @@ public:
     Classifier();
     ~Classifier();
 
-    void dimensions( int & rawQty, int stdQty, int & step );
+    void dimensions( int & rawQty, int & stdQty, int & step );
     void setCategories( int categories = 3 );
     void push( int category, const std::vector<float> & data );
     int  classify( const std::vector<float> & data );

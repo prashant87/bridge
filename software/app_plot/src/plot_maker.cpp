@@ -215,7 +215,8 @@ void PlotMaker::classificationSample( int rawQty, int stdQty, int step, std::vec
     int destInd = 0;
     for ( int i=0; i<CHANNELS_QTY; i++ )
     {
-        PlotData & d = this->data[i];
+        const int ch = CHANNELS[i];
+        PlotData & d = this->data[ch];
         const int qty = (int)d.data.size();
         for ( int j=0; j<rawQty; j++ )
         {

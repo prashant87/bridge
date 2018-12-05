@@ -132,7 +132,7 @@ void AlStream::processBuffers()
         // Decrease number of free buffers.
         freeBuffers -= 1;
 
-        std::cout << "a" << std::endl;
+        //std::cout << "a" << std::endl;
     }
 }
 
