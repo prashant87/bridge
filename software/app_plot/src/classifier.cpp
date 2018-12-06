@@ -7,6 +7,8 @@
 #include "portable_insts.hpp"
 #include <fstream>
 
+#include <Eigen/Dense>
+
 // Right now have 3 channels. So "INPUTS" value should be a multiple of 3.
 const int CHANNELS = 3;
 const int RAW_READINGS_QTY = 5;
@@ -119,6 +121,9 @@ int  Classifier::classify( const std::vector<float> & data )
 
 bool Classifier::save( const char * fname )
 {
+    typedef Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> Matrix;
+    typedef Eigen::Matrix<float, Eigen::Dynamic, 1>              Vector;
+
     bool res = true;
     try {
         std::ofstream out( fname );
@@ -130,7 +135,24 @@ bool Classifier::save( const char * fname )
         for ( int i=0; i<qty; i++ )
         {
             OneClassifier & c = pd->classifiers[i];
-            //c.gpr.
+            //const MatrixXr& get_input_data()  {return input_data_;};
+            //const MatrixXr& get_output_data()  {return output_data_;};
+            const Matrix & dIn  = c.gpr.get_input_data();
+            const Vector & dOut = c.gpr.get_output_data();
+            const int dims        = dIn.rows();
+            const int readingsQty = dIn.rows();
+            oa << dims;
+            oa << readingsQty;
+            for ( int j=0; j<readingsQty; j++ )
+            {
+                for ( int k=0; k<dims; k++ )
+                {
+                    const float v = dIn(j, k);
+                    oa << v;
+                }
+                const float v = dOut(j);
+                oa << v;
+            }
         }
 
         out.flush();
@@ -148,6 +170,37 @@ bool Classifier::load( const char * fname )
     try {
         std::ifstream in( fname );
         eos::portable_iarchive ia( in, boost::archive::no_header );
+
+        int qty;
+        ia >> qty;
+
+        pd->classifiers.clear();
+        pd->classifiers.resize( qty );
+
+        for ( int i=0; i<qty; i++ )
+        {
+            OneClassifier & c = pd->classifiers[i];
+            int dims;
+            ia >> dims;
+            int readingsQty;
+            ia >> readingsQty;
+            Eigen::Matrix<float, Eigen::Dynamic, 1> vIn;
+            Eigen::Matrix<float, 1, 1> vOut;
+            vIn.resize( dims, 1 );
+            for ( int j=0; j<readingsQty; j++ )
+            {
+                for ( int k=0; k<dims; k++ )
+                {
+                    float v;
+                    ia >> v;
+                    vIn(k) = v;
+                }
+                float v;
+                ia >> v;
+                vOut(0) = v;
+                c.gpr.AddTrainingData( vIn, vOut );
+            }
+        }
 
     } catch(...)
     {

@@ -25,7 +25,7 @@ public:
     void plotStdGroupCtrls( const char * title );
     void plotStdGroup( int index, const char * title, const ImVec2 & sz=ImVec2( 320, 240 ), bool sameLine=false );
 
-    ImguiExample() : OgreBites::ApplicationContext("OgreImguiExample")
+    ImguiExample() : OgreBites::ApplicationContext("Electrical analysis")
     {
         training = true;
     }
@@ -126,13 +126,13 @@ void ImguiExample::plotsWindow()
     if ( ImGui::Begin( "Plots", 0 ) )
     {
         plotGroupCtrls( "Controls" );
-        plotGroup( 0, "Plot A", ImVec2(0, 180), false );
-        plotGroup( 1, "Plot B", ImVec2(0, 180), true );
-        plotGroup( 2, "Plot C", ImVec2(0, 180), false );
+        //plotGroup( 0, "Plot A", ImVec2(0, 180), false );
+        //plotGroup( 1, "Plot B", ImVec2(0, 180), true );
+        //plotGroup( 2, "Plot C", ImVec2(0, 180), false );
         plotGroup( 3, "Plot D", ImVec2( 0, 180 ), true );
         plotGroup( 4, "Plot E", ImVec2( 0, 180 ), true );
         plotGroup( 5, "Plot F", ImVec2( 0, 180 ), true );
-        plotGroup( 6, "Plot G", ImVec2( 0, 180 ), true );
+        //plotGroup( 6, "Plot G", ImVec2( 0, 180 ), true );
     }
     ImGui::End();
 }
@@ -198,13 +198,13 @@ void ImguiExample::plotsStdWindow()
     if ( ImGui::Begin( "Plots std", 0 ) )
     {
         plotGroupCtrls( "Controls" );
-        plotStdGroup( 0, "Plot std A", ImVec2(0, 180), false );
-        plotStdGroup( 1, "Plot std B", ImVec2(0, 180), true );
-        plotStdGroup( 2, "Plot std C", ImVec2(0, 180), false );
+        //plotStdGroup( 0, "Plot std A", ImVec2(0, 180), false );
+        //plotStdGroup( 1, "Plot std B", ImVec2(0, 180), true );
+        //plotStdGroup( 2, "Plot std C", ImVec2(0, 180), false );
         plotStdGroup( 3, "Plot std D", ImVec2( 0, 180 ), true );
         plotStdGroup( 4, "Plot std E", ImVec2( 0, 180 ), true );
         plotStdGroup( 5, "Plot std F", ImVec2( 0, 180 ), true );
-        plotStdGroup( 6, "Plot std G", ImVec2( 0, 180 ), true );
+        //plotStdGroup( 6, "Plot std G", ImVec2( 0, 180 ), true );
     }
 
     ImGui::End();
@@ -263,22 +263,40 @@ void ImguiExample::plotRegressionWindow()
 {
     if ( ImGui::Begin( "Regression", 0 ) )
     {
-        ImGui::Checkbox( "Training", &training );
-        if ( training )
+        ImGui::BeginGroup();
         {
-            ImGui::SameLine();
-            ImGui::Text( "Use \"1\", \"2\", \"3\" buttons to add training data to a classifier" );
-        }
-        else
-        {
-            int rawQty, stdQty, step;
-            classifier.dimensions( rawQty, stdQty, step );
-            std::vector<float> data;
-            plotMaker.classificationSample( rawQty, stdQty, step, data );
-            int category = classifier.classify( data );
+            ImGui::Checkbox( "Training", &training );
+            if ( training )
+            {
+                ImGui::SameLine();
+                ImGui::Text( "Use \"1\", \"2\", \"3\" buttons to add training data to a classifier" );
+            }
+            else
+            {
+                int rawQty, stdQty, step;
+                classifier.dimensions( rawQty, stdQty, step );
+                std::vector<float> data;
+                plotMaker.classificationSample( rawQty, stdQty, step, data );
+                int category = classifier.classify( data );
 
-            ImGui::Text( "Category %i", category );
+                ImGui::Text( "Category %i", category );
+            }
         }
+        ImGui::EndGroup();
+
+        ImGui::BeginGroup();
+        {
+            if ( ImGui::Button( "Load" ) )
+            {
+
+            }
+            ImGui::SameLine();
+            if ( ImGui::Button( "Save" ) )
+            {
+
+            }
+        }
+        ImGui::EndGroup();
     }
 
     ImGui::End();
