@@ -62,11 +62,43 @@ Classifier::PD::~PD()
 Classifier::Classifier()
 {
     pd = new PD();
+
+    setProperties( 1.1, 1.0, 0.4 );
 }
 
 Classifier::~Classifier()
 {
     delete pd;
+}
+
+void Classifier::setProperties( float scale, float sigma, float dataSigma )
+{
+    const size_t qty = pd->classifiers.size();
+    for ( size_t i=0; i<qty; i++ )
+    {
+        OneClassifier & c = pd->classifiers[i];
+        c.gpr.SetHyperParams( scale, sigma, dataSigma );
+    }
+}
+
+void Classifier::properties( float & scale, float & sigma, float & dataSigma )
+{
+    const size_t qty = pd->classifiers.size();
+    if ( qty > 0 )
+    {
+        OneClassifier & c = pd->classifiers[0];
+        double x, y, z;
+        c.gpr.GetHyperParams( x, y, z );
+        scale     = x;
+        sigma     = y;
+        dataSigma = z;
+    }
+    else
+    {
+        scale = -1.0;
+        sigma = -1.0;
+        dataSigma = -1.0;
+    }
 }
 
 void Classifier::dimensions( int & rawQty, int & stdQty, int & step )
@@ -78,7 +110,12 @@ void Classifier::dimensions( int & rawQty, int & stdQty, int & step )
 
 void Classifier::setCategories( int categories )
 {
+    float scale, sigma, dataSigma;
+    properties( scale, sigma, dataSigma );
+
     pd->setCategories( categories );
+
+    setProperties( scale, sigma, dataSigma );
 }
 
 void Classifier::push( int category, const std::vector<float> & data )
@@ -129,6 +166,12 @@ bool Classifier::save( const char * fname )
         std::ofstream out( fname );
         eos::portable_oarchive oa( out, boost::archive::no_header );
 
+        float scale, sigma, dataSigma;
+        properties( scale, sigma, dataSigma );
+        oa << scale;
+        oa << sigma;
+        oa << dataSigma;
+
         const int qty = static_cast<int>( pd->classifiers.size() );
         oa << qty;
 
@@ -142,14 +185,14 @@ bool Classifier::save( const char * fname )
             if ( readingsQty > 0 )
             {
                 const Matrix & dIn  = c.gpr.get_input_data();
-                const Vector & dOut = c.gpr.get_output_data();
-                const int dims        = dIn.rows();
+                const Matrix & dOut = c.gpr.get_output_data();
+                const int dims      = dIn.rows();
                 oa << dims;
                 for ( int j=0; j<readingsQty; j++ )
                 {
                     for ( int k=0; k<dims; k++ )
                     {
-                        const float v = dIn(j, k);
+                        const float v = dIn(k, j);
                         oa << v;
                     }
                     const float v = dOut(j);
@@ -174,11 +217,18 @@ bool Classifier::load( const char * fname )
         std::ifstream in( fname );
         eos::portable_iarchive ia( in, boost::archive::no_header );
 
+        float scale, sigma, dataSigma;
+        ia >> scale;
+        ia >> sigma;
+        ia >> dataSigma;
+
         int qty;
         ia >> qty;
 
         pd->classifiers.clear();
         pd->classifiers.resize( qty );
+
+        setProperties( scale, sigma, dataSigma );
 
         for ( int i=0; i<qty; i++ )
         {

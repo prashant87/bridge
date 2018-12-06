@@ -15,6 +15,9 @@ public:
     Classifier();
     ~Classifier();
 
+    void setProperties( float scale, float sigma, float dataSigma );
+    void properties( float & scale, float & sigma, float & dataSigma );
+
     void dimensions( int & rawQty, int & stdQty, int & step );
     void setCategories( int categories = 3 );
     void push( int category, const std::vector<float> & data );
