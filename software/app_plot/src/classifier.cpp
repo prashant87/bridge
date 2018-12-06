@@ -137,21 +137,24 @@ bool Classifier::save( const char * fname )
             OneClassifier & c = pd->classifiers[i];
             //const MatrixXr& get_input_data()  {return input_data_;};
             //const MatrixXr& get_output_data()  {return output_data_;};
-            const Matrix & dIn  = c.gpr.get_input_data();
-            const Vector & dOut = c.gpr.get_output_data();
-            const int dims        = dIn.rows();
-            const int readingsQty = dIn.rows();
-            oa << dims;
+            const int readingsQty = c.gpr.get_n_data();
             oa << readingsQty;
-            for ( int j=0; j<readingsQty; j++ )
+            if ( readingsQty > 0 )
             {
-                for ( int k=0; k<dims; k++ )
+                const Matrix & dIn  = c.gpr.get_input_data();
+                const Vector & dOut = c.gpr.get_output_data();
+                const int dims        = dIn.rows();
+                oa << dims;
+                for ( int j=0; j<readingsQty; j++ )
                 {
-                    const float v = dIn(j, k);
+                    for ( int k=0; k<dims; k++ )
+                    {
+                        const float v = dIn(j, k);
+                        oa << v;
+                    }
+                    const float v = dOut(j);
                     oa << v;
                 }
-                const float v = dOut(j);
-                oa << v;
             }
         }
 
@@ -180,25 +183,29 @@ bool Classifier::load( const char * fname )
         for ( int i=0; i<qty; i++ )
         {
             OneClassifier & c = pd->classifiers[i];
-            int dims;
-            ia >> dims;
+            c.gpr.ClearTrainingData();
             int readingsQty;
             ia >> readingsQty;
-            Eigen::Matrix<float, Eigen::Dynamic, 1> vIn;
-            Eigen::Matrix<float, 1, 1> vOut;
-            vIn.resize( dims, 1 );
-            for ( int j=0; j<readingsQty; j++ )
+            if ( readingsQty > 0 )
             {
-                for ( int k=0; k<dims; k++ )
+                int dims;
+                ia >> dims;
+                Eigen::Matrix<float, Eigen::Dynamic, 1> vIn;
+                Eigen::Matrix<float, 1, 1> vOut;
+                vIn.resize( dims, 1 );
+                for ( int j=0; j<readingsQty; j++ )
                 {
+                    for ( int k=0; k<dims; k++ )
+                    {
+                        float v;
+                        ia >> v;
+                        vIn(k) = v;
+                    }
                     float v;
                     ia >> v;
-                    vIn(k) = v;
+                    vOut(0) = v;
+                    c.gpr.AddTrainingData( vIn, vOut );
                 }
-                float v;
-                ia >> v;
-                vOut(0) = v;
-                c.gpr.AddTrainingData( vIn, vOut );
             }
         }
 

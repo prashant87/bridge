@@ -288,12 +288,12 @@ void ImguiExample::plotRegressionWindow()
         {
             if ( ImGui::Button( "Load" ) )
             {
-
+                classifier.load( "./classifier.data" );
             }
             ImGui::SameLine();
             if ( ImGui::Button( "Save" ) )
             {
-
+                classifier.save( "./classifier.data" );
             }
         }
         ImGui::EndGroup();
