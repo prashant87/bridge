@@ -4,18 +4,26 @@
 #include "ImguiManager.h"
 #include "plot_maker.h"
 #include "classifier.h"
+#include "fitter.h"
 #include "al_wrap.h"
 
 class ImguiExample : public OgreBites::ApplicationContext, public OgreBites::InputListener
 {
 public:
-    AlWrap    alWrap;
     PlotMaker plotMaker;
+    AlWrap    alWrap;
     Classifier classifier;
+    Fitter     fitter;
     std::vector<float> data[7];
-    bool training;
+
+    bool classificationEnabled;
+    bool classificationTraining;
+
+    bool fittingEnabled;
+    bool fittingTraining;
 
     void plotRegressionWindow();
+    void plotFitterWindow();
 
     void plotsWindow();
     void plotGroupCtrls( const char * title );
@@ -27,7 +35,11 @@ public:
 
     ImguiExample() : OgreBites::ApplicationContext("Electrical analysis")
     {
-        training = true;
+        classificationEnabled = false;
+        classificationTraining = true;
+
+        fittingEnabled  = false;
+        fittingTraining = true;
     }
 
     bool frameStarted(const Ogre::FrameEvent& evt)
@@ -42,6 +54,7 @@ public:
         plotsWindow();
         plotsStdWindow();
         plotRegressionWindow();
+        plotFitterWindow();
 
         return true;
     }
@@ -93,7 +106,7 @@ public:
         {
             getRoot()->queueEndRendering();
         }
-        if ( training )
+        if ( classificationEnabled && classificationTraining )
         {
             if ( ( evt.keysym.sym >= '1' ) && ( evt.keysym.sym <= '3' ) )
             {
@@ -103,6 +116,18 @@ public:
                 std::vector<float> data;
                 plotMaker.classificationSample( rawQty, stdQty, step, data );
                 classifier.push( category, data );
+            }
+        }
+        if ( fittingEnabled && fittingTraining )
+        {
+            if ( ( evt.keysym.sym >= '1' ) && ( evt.keysym.sym <= '9' ) )
+            {
+                const float value = static_cast<float>(evt.keysym.sym - '1')/9.0;
+                int rawQty, stdQty, step;
+                fitter.dimensions( rawQty, stdQty, step );
+                std::vector<float> data;
+                plotMaker.classificationSample( rawQty, stdQty, step, data );
+                fitter.push( value, data );
             }
         }
         return true;
@@ -265,21 +290,25 @@ void ImguiExample::plotRegressionWindow()
     {
         ImGui::BeginGroup();
         {
-            ImGui::Checkbox( "Training", &training );
-            if ( training )
+            ImGui::Checkbox( "Enabled", &classificationEnabled );
+            if ( classificationEnabled )
             {
-                ImGui::SameLine();
-                ImGui::Text( "Use \"1\", \"2\", \"3\" buttons to add training data to a classifier" );
-            }
-            else
-            {
-                int rawQty, stdQty, step;
-                classifier.dimensions( rawQty, stdQty, step );
-                std::vector<float> data;
-                plotMaker.classificationSample( rawQty, stdQty, step, data );
-                int category = classifier.classify( data );
+                ImGui::Checkbox( "Training", &classificationTraining );
+                if ( classificationTraining )
+                {
+                    ImGui::SameLine();
+                    ImGui::Text( "Use \"1\", \"2\", \"3\" buttons to add training data to a classifier" );
+                }
+                else
+                {
+                    int rawQty, stdQty, step;
+                    classifier.dimensions( rawQty, stdQty, step );
+                    std::vector<float> data;
+                    plotMaker.classificationSample( rawQty, stdQty, step, data );
+                    int category = classifier.classify( data );
 
-                ImGui::Text( "Category %i", category );
+                    ImGui::Text( "Category %i", category );
+                }
             }
         }
         ImGui::EndGroup();
@@ -300,7 +329,53 @@ void ImguiExample::plotRegressionWindow()
     }
 
     ImGui::End();
+}
 
+void ImguiExample::plotFitterWindow()
+{
+    if ( ImGui::Begin( "Fitting", 0 ) )
+    {
+        ImGui::BeginGroup();
+        {
+            ImGui::Checkbox( "Enabled", &fittingEnabled );
+            if ( fittingEnabled )
+            {
+                ImGui::Checkbox( "Training", &fittingTraining );
+                if ( fittingTraining )
+                {
+                    ImGui::SameLine();
+                    ImGui::Text( "Use \"1\", through \"9\" buttons to describe current hand pose" );
+                }
+                else
+                {
+                    int rawQty, stdQty, step;
+                    fitter.dimensions( rawQty, stdQty, step );
+                    std::vector<float> data;
+                    plotMaker.classificationSample( rawQty, stdQty, step, data );
+                    const float value = fitter.classify( data );
+
+                    ImGui::Text( "Hand pose: %3.2f", value );
+                }
+            }
+        }
+        ImGui::EndGroup();
+
+        ImGui::BeginGroup();
+        {
+            if ( ImGui::Button( "Load" ) )
+            {
+                fitter.load( "./fitter.data" );
+            }
+            ImGui::SameLine();
+            if ( ImGui::Button( "Save" ) )
+            {
+                fitter.save( "./fitter.data" );
+            }
+        }
+        ImGui::EndGroup();
+    }
+
+    ImGui::End();
 }
 
 
