@@ -1,5 +1,7 @@
 #include <Ogre.h>
 #include <OgreApplicationContext.h>
+#include <iostream>
+#include <iomanip>
 
 #include "ImguiManager.h"
 #include "plot_maker.h"
@@ -308,6 +310,27 @@ void ImguiExample::plotRegressionWindow()
                     int category = classifier.classify( data );
 
                     ImGui::Text( "Category %i", category );
+                    static Ogre::TexturePtr texture;
+                    try {
+                        if ( category == 1 )
+                        {
+                            texture = Ogre::TextureManager::getSingleton().getByName( "engaged.png" );
+                            if ( !texture )
+                                texture = Ogre::TextureManager::getSingleton().load( "engaged.png", "General" );
+                        }
+                        else if ( category == 2 )
+                        {
+                            texture = Ogre::TextureManager::getSingleton().getByName( "disengaged.png" );
+                            if ( !texture )
+                                texture = Ogre::TextureManager::getSingleton().load( "disengaged.png", "General" );
+                        }
+                    } catch(...)
+                    {}
+                    if ( texture )
+                    {
+                        Ogre::ResourceHandle handle = texture->getHandle();
+                        ImGui::Image( (ImTextureID)handle, ImVec2( 512, 512 ) );
+                    }
                 }
             }
         }
@@ -355,6 +378,28 @@ void ImguiExample::plotFitterWindow()
                     const float value = fitter.classify( data );
 
                     ImGui::Text( "Hand pose: %3.2f", value );
+                    int v = static_cast<int>( 99.0f * value );
+                    if ( v < 0 )
+                        v = 0;
+                    else if ( v > 99 )
+                        v = 99;
+                    v += 1;
+                    Ogre::stringstream ss;
+                    ss << std::setw( 4 ) << std::setfill('0') << "Image" << v << ".png";
+                    const Ogre::String stri = ss.str();
+
+                    static Ogre::TexturePtr texture;
+                    try {
+                        texture = Ogre::TextureManager::getSingleton().getByName( stri );
+                        if ( !texture )
+                            texture = Ogre::TextureManager::getSingleton().getByName( stri, "General" );
+                    } catch (...)
+                    {}
+                    if ( texture )
+                    {
+                        Ogre::ResourceHandle handle = texture->getHandle();
+                        ImGui::Image( (ImTextureID)handle, ImVec2( 512, 512 ) );
+                    }
                 }
             }
         }
