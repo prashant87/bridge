@@ -11,11 +11,11 @@
 
 // Right now have 3 channels. So "INPUTS" value should be a multiple of 3.
 const int CHANNELS = 3;
-const int RAW_READINGS_QTY = 5;
-const int STD_READINGS_QTY = 5;
+const int RAW_READINGS_QTY = 16;
+const int STD_READINGS_QTY = 16;
 const int INPUTS  = CHANNELS*(RAW_READINGS_QTY + STD_READINGS_QTY);
 const int OUTPUTS = 1;
-const int STEP_SIZE = 50;
+const int STEP_SIZE = 2;
 
 typedef Eigen::Matrix<float, INPUTS, 1>  IN;
 typedef Eigen::Matrix<float, OUTPUTS, 1> OUT;
