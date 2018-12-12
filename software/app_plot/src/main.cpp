@@ -307,7 +307,13 @@ void ImguiExample::plotRegressionWindow()
                     classifier.dimensions( rawQty, stdQty, step );
                     std::vector<float> data;
                     plotMaker.classificationSample( rawQty, stdQty, step, data );
-                    int category = classifier.classify( data );
+                    //int category = classifier.classify( data );
+
+                    // For debugging.
+                    static int category = 0;
+                    category += 1;
+                    if ( category > 2 )
+                        category = 0;
 
                     ImGui::Text( "Category %i", category );
                     static Ogre::TexturePtr texture;
@@ -375,7 +381,13 @@ void ImguiExample::plotFitterWindow()
                     fitter.dimensions( rawQty, stdQty, step );
                     std::vector<float> data;
                     plotMaker.classificationSample( rawQty, stdQty, step, data );
-                    const float value = fitter.classify( data );
+                    //const float value = fitter.classify( data );
+
+                    // Debugging.
+                    static float value = 0.0f;
+                    value += 0.01f;
+                    if ( value >= 1.0f )
+                        value = 0.0f;
 
                     ImGui::Text( "Hand pose: %3.2f", value );
                     int v = static_cast<int>( 99.0f * value );
@@ -385,14 +397,14 @@ void ImguiExample::plotFitterWindow()
                         v = 99;
                     v += 1;
                     Ogre::stringstream ss;
-                    ss << std::setw( 4 ) << std::setfill('0') << "Image" << v << ".png";
+                    ss << "Image" << std::setfill('0') << std::setw( 4 ) << v << ".png";
                     const Ogre::String stri = ss.str();
 
                     static Ogre::TexturePtr texture;
                     try {
                         texture = Ogre::TextureManager::getSingleton().getByName( stri );
                         if ( !texture )
-                            texture = Ogre::TextureManager::getSingleton().getByName( stri, "General" );
+                            texture = Ogre::TextureManager::getSingleton().load( stri, "General" );
                     } catch (...)
                     {}
                     if ( texture )
