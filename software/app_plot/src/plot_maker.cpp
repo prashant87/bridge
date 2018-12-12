@@ -208,8 +208,8 @@ bool PlotMaker::samples( std::vector<unsigned short> & data )
 
 void PlotMaker::classificationSample( int rawQty, int stdQty, int step, std::vector<float> & data )
 {
-    const int CHANNELS_QTY = 3;
-    const int CHANNELS[] = { 3, 4, 5 };
+    const int CHANNELS_QTY = 5;
+    const int CHANNELS[] = { 1, 2, 3, 4, 5 };
     const int qty = CHANNELS_QTY*(rawQty + stdQty);
     data.resize( qty );
     int destInd = 0;

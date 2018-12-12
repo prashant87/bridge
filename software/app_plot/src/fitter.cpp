@@ -9,12 +9,14 @@
 #include <Eigen/Dense>
 
 // Right now have 3 channels. So "INPUTS" value should be a multiple of 3.
-const int CHANNELS = 3;
-const int RAW_READINGS_QTY = 5;
-const int STD_READINGS_QTY = 5;
+const int CHANNELS = 5;
+const int RAW_READINGS_QTY = 10;
+const int STD_READINGS_QTY = 10;
 const int INPUTS  = CHANNELS*(RAW_READINGS_QTY + STD_READINGS_QTY);
 const int OUTPUTS = 1;
-const int STEP_SIZE = 50;
+const int STEP_SIZE = 2;
+const float ALPHA = 0.05f;
+const float _1_ALPHA = (1.0f - ALPHA);
 
 typedef Eigen::Matrix<float, INPUTS, 1>  IN;
 typedef Eigen::Matrix<float, OUTPUTS, 1> OUT;
@@ -24,10 +26,11 @@ class Fitter::PD
 {
 public:
     GaussianProcessRegression<float> gpr;
-
+    float y;
 
     PD()
-        : gpr( INPUTS, OUTPUTS )
+        : gpr( INPUTS, OUTPUTS ),
+          y( 0.0f )
     {}
 
     ~PD() {}
@@ -90,9 +93,10 @@ float Fitter::classify( const std::vector<float> & data )
         in(i) = data[i];
 
     out = pd->gpr.DoRegression( in );
-    const float val = out(0);
+    const float x = out(0);
+    pd->y = _1_ALPHA*pd->y + ALPHA*x;
 
-    return val;
+    return pd->y;
 }
 
 bool Fitter::save( const char * fname )

@@ -166,8 +166,8 @@ void ImguiExample::plotsWindow()
     {
         plotGroupCtrls( "Controls" );
         //plotGroup( 0, "Plot A", ImVec2(0, 180), false );
-        //plotGroup( 1, "Plot B", ImVec2(0, 180), true );
-        //plotGroup( 2, "Plot C", ImVec2(0, 180), false );
+        plotGroup( 1, "Plot B", ImVec2(0, 180), true );
+        plotGroup( 2, "Plot C", ImVec2(0, 180), false );
         plotGroup( 3, "Plot D", ImVec2( 0, 180 ), true );
         plotGroup( 4, "Plot E", ImVec2( 0, 180 ), true );
         plotGroup( 5, "Plot F", ImVec2( 0, 180 ), true );
@@ -238,8 +238,8 @@ void ImguiExample::plotsStdWindow()
     {
         plotGroupCtrls( "Controls" );
         //plotStdGroup( 0, "Plot std A", ImVec2(0, 180), false );
-        //plotStdGroup( 1, "Plot std B", ImVec2(0, 180), true );
-        //plotStdGroup( 2, "Plot std C", ImVec2(0, 180), false );
+        plotStdGroup( 1, "Plot std B", ImVec2(0, 180), true );
+        plotStdGroup( 2, "Plot std C", ImVec2(0, 180), false );
         plotStdGroup( 3, "Plot std D", ImVec2( 0, 180 ), true );
         plotStdGroup( 4, "Plot std E", ImVec2( 0, 180 ), true );
         plotStdGroup( 5, "Plot std F", ImVec2( 0, 180 ), true );

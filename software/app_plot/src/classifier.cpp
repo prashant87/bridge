@@ -10,12 +10,14 @@
 #include <Eigen/Dense>
 
 // Right now have 3 channels. So "INPUTS" value should be a multiple of 3.
-const int CHANNELS = 3;
-const int RAW_READINGS_QTY = 16;
-const int STD_READINGS_QTY = 16;
+const int CHANNELS = 5;
+const int RAW_READINGS_QTY = 10;
+const int STD_READINGS_QTY = 10;
 const int INPUTS  = CHANNELS*(RAW_READINGS_QTY + STD_READINGS_QTY);
 const int OUTPUTS = 1;
 const int STEP_SIZE = 2;
+const float ALPHA = 0.05f;
+const float _1_ALPHA = (1.0f - ALPHA);
 
 typedef Eigen::Matrix<float, INPUTS, 1>  IN;
 typedef Eigen::Matrix<float, OUTPUTS, 1> OUT;
@@ -24,9 +26,11 @@ typedef Eigen::Matrix<float, OUTPUTS, 1> OUT;
 struct OneClassifier
 {
     GaussianProcessRegression<float> gpr;
+    float y;
 
     OneClassifier()
-        : gpr( INPUTS, OUTPUTS )
+        : gpr( INPUTS, OUTPUTS ),
+          y( 0.0f )
     {}
 };
 
@@ -144,11 +148,13 @@ int  Classifier::classify( const std::vector<float> & data )
     const int qty = (int)pd->classifiers.size();
     for ( int i=0; i<qty; i++ )
     {
-        out = pd->classifiers[i].gpr.DoRegression( in );
-        const float v = out(0);
-        if ( ( i==0 ) || ( v > val ) )
+        OneClassifier & c = pd->classifiers[i];
+        out = c.gpr.DoRegression( in );
+        const float x = out(0);
+        c.y = _1_ALPHA*c.y + ALPHA*x;
+        if ( ( i==0 ) || ( c.y > val ) )
         {
-            val = v;
+            val = c.y;
             ind = i;
         }
     }
