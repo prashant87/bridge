@@ -105,6 +105,15 @@ public:
         alWrap.createStream( &plotMaker );
     }
 
+    void shutdown()
+    {
+        if ( classificationTexture )
+            classificationTexture.reset();
+
+        if ( fittingTexture )
+            fittingTexture.reset();
+    }
+
     bool keyPressed(const OgreBites::KeyboardEvent& evt)
     {
         if (evt.keysym.sym == 27)
