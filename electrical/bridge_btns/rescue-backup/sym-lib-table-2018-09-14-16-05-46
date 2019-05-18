@@ -1,0 +1,8 @@
+(sym_lib_table
+  (lib (name bridge-rescue)(type Legacy)(uri ${KIPRJMOD}/bridge-rescue.lib)(options "")(descr ""))
+  (lib (name crystal-4pin)(type Legacy)(uri /home/testuser/projects/bridge.git/electrical/components/crystal-4pin.lib)(options "")(descr ""))
+  (lib (name my_comps)(type Legacy)(uri /home/testuser/projects/bridge.git/electrical/components/my_comps.lib)(options "")(descr ""))
+  (lib (name stm32f103cbt6)(type Legacy)(uri /home/testuser/projects/bridge.git/electrical/components/stm32f103cbt6.lib)(options "")(descr ""))
+  (lib (name stm32f105r8t6)(type Legacy)(uri /home/testuser/projects/bridge.git/electrical/components/stm32f105r8t6.lib)(options "")(descr ""))
+  (lib (name stm32f405rgt6)(type Legacy)(uri /home/testuser/projects/bridge.git/electrical/components/stm32f405rgt6.lib)(options "")(descr ""))
+)

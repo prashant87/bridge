@@ -1,0 +1,13 @@
+EESchema-DOCLIB  Version 2.0
+#
+$CMP MY_USB_B
+D USB Type B connector
+K connector USB
+$ENDCMP
+#
+$CMP USB_B
+D USB Type B connector
+K connector USB
+$ENDCMP
+#
+#End Doc Library
