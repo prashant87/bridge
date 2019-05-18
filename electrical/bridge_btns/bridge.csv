@@ -1,51 +1,19 @@
 "Id";"Designator";"Package";"Quantity";"Designation";"Supplier and ref";
 1;"P2";"PinHeader_1x02_P1.27mm_Vertical";1;"bootldr";;;
 2;"P1";"PinHeader_1x02_P1.27mm_Vertical";1;"~rst~";;;
-
-
 3;"C1,C3";"C_0603_1608Metric";2;"18p";;;
-https://www.digikey.com/product-detail/en/samsung-electro-mechanics/CL10C180JB8NNNC/1276-1089-1-ND/3889175
-
 4;"C2,C6,C7,C8,C12,C13";"C_0603_1608Metric";6;"100n";;;
-https://www.digikey.com/product-detail/en/yageo/CC0603KRX7R7BB104/311-1088-1-ND/302998
-
 5;"C4,C5,C9";"C_0603_1608Metric";3;"4u7";;;
-https://www.digikey.com/product-detail/en/samsung-electro-mechanics/CL10B475KQ8NQNC/1276-2087-1-ND/3890173
-
 6;"C10,C11";"C_0603_1608Metric";2;"2u2";;;
-https://www.digikey.com/product-detail/en/samsung-electro-mechanics/CL10B225KP8NNNC/1276-1134-1-ND/3889220
-
 7;"D1,D2";"LED_D3.0mm";2;"LED";;;
-
-
-8;"J1";"USB_Micro-B_Molex_47346-0001";1;"USB_OTG";;;
-https://www.digikey.com/product-detail/en/amphenol-fci/10118192-0001LF/609-4613-1-ND/2785378
-
-
-9;"J2";"my_usb_a";1;"USB_A";;;
-https://www.digikey.com/product-detail/en/amphenol-fci/87583-3010RPALF/609-4946-1-ND/5355470
-
-10;"J3";"PinHeader_1x03_P1.27mm_Vertical";1;"swd";;;
-
-
-11;"R1,R2";"R_0603_1608Metric";2;"10k 5%";;;
-https://www.digikey.com/product-detail/en/yageo/RC0603JR-0710KL/311-10KGRCT-ND/729647
-
-12;"R3,R4";"R_0603_1608Metric";2;"1k 5%";;;
-https://www.digikey.com/product-detail/en/yageo/RC0603JR-071KL/311-1.0KGRCT-ND/729624
-
-13;"R5";"R_0603_1608Metric";1;"100 5%";;;
-https://www.digikey.com/product-detail/en/yageo/RC0603FR-07100RL/311-100HRCT-ND/729835
-
-14;"U1";"CRYSTAL-SMD-5x3";1;"crystal-4pin";;;
-https://www.digikey.com/product-detail/en/diodes-incorporated/FY0800018/FY0800018CT-ND/6043910
-
-
-15;"U2";"stm32f405rgt6";1;"stm32f405rgt6";;;
-https://www.digikey.com/product-detail/en/stmicroelectronics/STM32F405RGT6/497-11767-ND/2754208
-
-
-16;"U3";"SOT-223";1;"my-NCP1117ST50T3G";;;
-https://www.digikey.com/product-detail/en/on-semiconductor/NCP1117ST50T3G/NCP1117ST50T3GOSCT-ND/1967217
-
-
+8;"J3";"PinHeader_1x03_P1.27mm_Vertical";1;"swd";;;
+9;"R1,R2,R6,R7,R8,R9,R10,R11,R12,R13,R14,R15,R16,R18,R19";"R_0603_1608Metric";15;"10k 5%";;;
+10;"R3,R4";"R_0603_1608Metric";2;"1k 5%";;;
+11;"R5";"R_0603_1608Metric";1;"100 5%";;;
+12;"U1";"CRYSTAL-SMD-5x3";1;"crystal-4pin";;;
+13;"U2";"stm32f405rgt6";1;"stm32f405rgt6";;;
+14;"U3";"SOT-223";1;"my-NCP1117ST50T3G";;;
+15;"J1,J2";"USB_B_Horizontal";2;"MY_USB_B";;;
+16;"J4";"PinHeader_1x05_P1.27mm_Vertical";1;"Conn_01x05";;;
+17;"J5";"PinHeader_1x07_P1.27mm_Vertical";1;"Conn_01x07";;;
+18;"J6,J7";"PinHeader_1x14_P1.27mm_Vertical";2;"Conn_01x14";;;
