@@ -59,7 +59,6 @@ LIBS:elec-unifil
 LIBS:ESD_Protection
 LIBS:ftdi
 LIBS:gennum
-LIBS:graphic_symbols
 LIBS:hc11
 LIBS:infineon
 LIBS:intel
@@ -70,7 +69,6 @@ LIBS:Lattice
 LIBS:leds
 LIBS:LEM
 LIBS:linear
-LIBS:logic_programmable
 LIBS:maxim
 LIBS:mechanical
 LIBS:memory
@@ -890,7 +888,7 @@ dev_dp
 Text Label 6275 5300 0    60   ~ 0
 dev_dm
 Wire Wire Line
-	6225 7075 7400 7075
+	6225 7075 7950 7075
 Text Label 7750 7075 0    60   ~ 0
 vbus
 Wire Wire Line
@@ -1034,27 +1032,25 @@ Wire Wire Line
 Wire Wire Line
 	10450 12250 11625 12250
 Wire Wire Line
-	19725 4375 19350 4375
+	18600 4375 19725 4375
 Wire Wire Line
-	19725 4475 19350 4475
-Text Label 19375 4375 0    60   ~ 0
-i2c_sda
+	18350 4475 19725 4475
 Text Label 19375 4475 0    60   ~ 0
+i2c_sda
+Text Label 19375 4375 0    60   ~ 0
 i2c_scl
 Wire Wire Line
-	19725 4275 19100 4275
-Wire Wire Line
-	19100 4275 19100 4400
+	18950 4275 19725 4275
 $Comp
 L GND #PWR027
 U 1 1 5CDF7FB4
-P 19100 4400
-F 0 "#PWR027" H 19100 4150 50  0001 C CNN
-F 1 "GND" H 19100 4250 50  0000 C CNN
-F 2 "" H 19100 4400 60  0000 C CNN
-F 3 "" H 19100 4400 60  0000 C CNN
-	1    19100 4400
-	-1   0    0    -1  
+P 18950 4075
+F 0 "#PWR027" H 18950 3825 50  0001 C CNN
+F 1 "GND" H 18950 3925 50  0000 C CNN
+F 2 "" H 18950 4075 60  0000 C CNN
+F 3 "" H 18950 4075 60  0000 C CNN
+	1    18950 4075
+	1    0    0    1   
 $EndComp
 Wire Wire Line
 	19725 4175 19100 4175
@@ -1167,11 +1163,11 @@ Wire Wire Line
 	19725 5875 19350 5875
 Wire Wire Line
 	19725 5975 19350 5975
-Text Label 19375 5675 0    60   ~ 0
+Text Label 19375 5875 0    60   ~ 0
 spi_sck
 Text Label 19375 5775 0    60   ~ 0
 spi_miso
-Text Label 19375 5875 0    60   ~ 0
+Text Label 19375 5675 0    60   ~ 0
 spi_mosi
 Text Label 19375 5975 0    60   ~ 0
 spi_nss
@@ -1268,45 +1264,45 @@ Text Label 12875 7850 0    60   ~ 0
 pb10
 Text Label 12875 8050 0    60   ~ 0
 pb11
-Text Label 21900 7475 0    60   ~ 0
+Text Label 21900 8375 0    60   ~ 0
 pb10
-Text Label 21900 7575 0    60   ~ 0
+Text Label 21900 8475 0    60   ~ 0
 pb11
 Text Label 12875 6250 0    60   ~ 0
 pb2
-Text Label 21900 7675 0    60   ~ 0
+Text Label 21900 8275 0    60   ~ 0
 pb2
 Text Label 12875 6050 0    60   ~ 0
 pb1
-Text Label 21900 7775 0    60   ~ 0
+Text Label 21900 8175 0    60   ~ 0
 pb1
 Text Label 12875 5850 0    60   ~ 0
 pb0
-Text Label 21900 7875 0    60   ~ 0
+Text Label 21900 8075 0    60   ~ 0
 pb0
 Text Label 12875 4250 0    60   ~ 0
 pa7
-Text Label 21900 7975 0    60   ~ 0
+Text Label 21900 7775 0    60   ~ 0
 pa7
 Text Label 12875 4050 0    60   ~ 0
 pa6
-Text Label 21900 8075 0    60   ~ 0
+Text Label 21900 7675 0    60   ~ 0
 pa6
 Text Label 12875 3850 0    60   ~ 0
 pa5
-Text Label 21900 8175 0    60   ~ 0
+Text Label 21900 7575 0    60   ~ 0
 pa5
 Text Label 12875 3650 0    60   ~ 0
 pa4
-Text Label 21900 8275 0    60   ~ 0
+Text Label 21900 7475 0    60   ~ 0
 pa4
 Text Label 17075 4250 0    60   ~ 0
 pc4
-Text Label 21900 8375 0    60   ~ 0
+Text Label 21900 7875 0    60   ~ 0
 pc4
 Text Label 17075 4450 0    60   ~ 0
 pc5
-Text Label 21900 8475 0    60   ~ 0
+Text Label 21900 7975 0    60   ~ 0
 pc5
 $Comp
 L R R16
@@ -1502,19 +1498,6 @@ Wire Wire Line
 Connection ~ 20400 6900
 NoConn ~ 16750 3850
 $Comp
-L R R17
-U 1 1 5CE10978
-P 7550 7075
-F 0 "R17" V 7630 7075 50  0000 C CNN
-F 1 "0" V 7450 7075 50  0000 C CNN
-F 2 "Resistor_SMD:R_0603_1608Metric" V 7480 7075 30  0001 C CNN
-F 3 "" H 7550 7075 30  0000 C CNN
-	1    7550 7075
-	0    1    1    0   
-$EndComp
-Wire Wire Line
-	7700 7075 7950 7075
-$Comp
 L PWR_FLAG #FLG034
 U 1 1 5CE123C5
 P 7225 4850
@@ -1558,4 +1541,117 @@ F 3 "" H 6075 7225 50  0001 C CNN
 	1    5925 7275
 	1    0    0    -1  
 $EndComp
+$Comp
+L Conn_01x14 J7
+U 1 1 5CDFA489
+P 23200 7775
+F 0 "J7" H 23200 8475 50  0000 C CNN
+F 1 "Conn_01x14" H 23200 6975 50  0000 C CNN
+F 2 "Connector_PinHeader_1.27mm:PinHeader_1x14_P1.27mm_Vertical" H 23200 7775 50  0001 C CNN
+F 3 "" H 23200 7775 50  0001 C CNN
+	1    23200 7775
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	22900 8475 23000 8475
+Wire Wire Line
+	22900 7175 22900 8625
+Wire Wire Line
+	22900 8375 23000 8375
+Wire Wire Line
+	22900 8275 23000 8275
+Connection ~ 22900 8375
+Wire Wire Line
+	22900 8175 23000 8175
+Connection ~ 22900 8275
+Wire Wire Line
+	22900 8075 23000 8075
+Connection ~ 22900 8175
+Wire Wire Line
+	22900 7975 23000 7975
+Connection ~ 22900 8075
+Wire Wire Line
+	22900 7875 23000 7875
+Connection ~ 22900 7975
+Wire Wire Line
+	22900 7775 23000 7775
+Connection ~ 22900 7875
+Wire Wire Line
+	22900 7675 23000 7675
+Connection ~ 22900 7775
+Wire Wire Line
+	22900 7575 23000 7575
+Connection ~ 22900 7675
+Wire Wire Line
+	22900 7475 23000 7475
+Connection ~ 22900 7575
+Wire Wire Line
+	22900 7375 23000 7375
+Connection ~ 22900 7475
+Wire Wire Line
+	22900 7275 23000 7275
+Connection ~ 22900 7375
+Wire Wire Line
+	22900 7175 23000 7175
+Connection ~ 22900 7275
+Connection ~ 22900 8475
+$Comp
+L GND #PWR036
+U 1 1 5CDFCD0A
+P 22900 8625
+F 0 "#PWR036" H 22900 8375 50  0001 C CNN
+F 1 "GND" H 22900 8475 50  0000 C CNN
+F 2 "" H 22900 8625 60  0000 C CNN
+F 3 "" H 22900 8625 60  0000 C CNN
+	1    22900 8625
+	-1   0    0    -1  
+$EndComp
+$Comp
+L R R19
+U 1 1 5CDFE60D
+P 18600 4150
+F 0 "R19" V 18680 4150 50  0000 C CNN
+F 1 "10k 5%" V 18600 4150 50  0000 C CNN
+F 2 "Resistor_SMD:R_0603_1608Metric" V 18530 4150 30  0001 C CNN
+F 3 "" H 18600 4150 30  0000 C CNN
+	1    18600 4150
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	18950 4275 18950 4075
+Wire Wire Line
+	18600 4375 18600 4300
+Wire Wire Line
+	18600 4000 18600 3900
+$Comp
+L VDD #PWR037
+U 1 1 5CDFEEEA
+P 18475 3800
+F 0 "#PWR037" H 18475 3650 50  0001 C CNN
+F 1 "VDD" H 18475 3950 50  0000 C CNN
+F 2 "" H 18475 3800 60  0000 C CNN
+F 3 "" H 18475 3800 60  0000 C CNN
+	1    18475 3800
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	18350 4475 18350 4300
+$Comp
+L R R18
+U 1 1 5CDFF0A0
+P 18350 4150
+F 0 "R18" V 18430 4150 50  0000 C CNN
+F 1 "10k 5%" V 18350 4150 50  0000 C CNN
+F 2 "Resistor_SMD:R_0603_1608Metric" V 18280 4150 30  0001 C CNN
+F 3 "" H 18350 4150 30  0000 C CNN
+	1    18350 4150
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	18350 4000 18350 3900
+Wire Wire Line
+	18350 3900 18600 3900
+Wire Wire Line
+	18475 3800 18475 3900
+Connection ~ 18475 3900
 $EndSCHEMATC
