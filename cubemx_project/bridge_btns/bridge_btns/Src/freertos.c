@@ -53,6 +53,8 @@
 #include "task.h"
 #include "main.h"
 #include "cmsis_os.h"
+#include "task_led.h"
+#include "task_imu.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */     
@@ -114,11 +116,13 @@ void MX_FREERTOS_Init(void) {
 
   /* Create the thread(s) */
   /* definition and creation of defaultTask */
-  osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 128);
-  defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
+  //osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 128);
+  //defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
+	taskLedInit();
+	taskImuInit();
   /* USER CODE END RTOS_THREADS */
 
   /* USER CODE BEGIN RTOS_QUEUES */
