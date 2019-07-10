@@ -3,6 +3,7 @@
 #include "main.h"
 #include "bno055.h"
 #include "cmsis_os.h"
+#include "task_led.h"
 
 static void bno055Init( void );
 static void bno055_delay( uint32_t msec );
@@ -26,7 +27,7 @@ void taskImuInit( void )
 
 	mutexId = osMutexCreate( &mutex );
 	// Initialize I2C peripherial.
-	MX_I2C2_Init();
+	//MX_I2C2_Init();
 	// Create reading thread.
 	osThreadCreate(osThread(imuTask), NULL);
 }
