@@ -14,6 +14,7 @@
 #include "usbd_hid.h"
 
 #include "task_imu.h"
+#include "usb_device.h"
 
 #define LED_PORT GPIOA
 #define LED_0    GPIO_PIN_1
