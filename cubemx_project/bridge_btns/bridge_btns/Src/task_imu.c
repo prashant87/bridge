@@ -54,7 +54,7 @@ uint8_t adjustMouse( int8_t * x, int8_t * y )
 			*x += dx;
 			angInt[0] -= dx;
 		}
-		else
+		else if ( angInt[0] < 0 )
 		{
 			int min_dx = -127 - (*x);
 			int dx = (angInt[0] > min_dx) ? angInt[0] : min_dx;
@@ -71,7 +71,7 @@ uint8_t adjustMouse( int8_t * x, int8_t * y )
 			*y += dy;
 			angInt[1] -= dy;
 		}
-		else
+		else if ( angInt[1] < 0 )
 		{
 			int min_dy = -127 - (*y);
 			int dy = (angInt[1] > min_dy) ? angInt[1] : min_dy;
@@ -98,11 +98,16 @@ static void vTaskImu( void * p )
 	vTaskDelay( 1000 );
 	// Initialize BNO055.
 	bno055Init();
+	// Initialize current time variable.
+	static TickType_t xLastWakeTime;
+	xLastWakeTime = xTaskGetTickCount();
 	// read data in infinite loop.
 	for (;;)
 	{
 		toggleLed( 2 );
-		vTaskDelay( 10 );
+
+		vTaskDelayUntil( &xLastWakeTime, 10 );
+		// Read sensor.
 		comres = bno055_read_quaternion_wxyz( &bno055_inst, &qq );
 		if ( comres != 0 )
 			continue;
