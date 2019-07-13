@@ -99,24 +99,24 @@ void MX_USB_DEVICE_Init(void)
   /* USER CODE END USB_DEVICE_Init_PreTreatment */
   
   /* Init Device Library, add supported class and start the library. */
-  USBD_Init(&hUsbDeviceHS, &HS_Desc, DEVICE_HS);
+  USBD_Init(&hUsbDeviceFS, &HS_Desc, DEVICE_FS);
 
-  USBD_RegisterClass(&hUsbDeviceHS, &USBD_HID);
+  USBD_RegisterClass(&hUsbDeviceFS, &USBD_HID);
 
-  USBD_Start(&hUsbDeviceHS);
+  USBD_Start(&hUsbDeviceFS);
 
   /* USER CODE BEGIN USB_DEVICE_Init_PreTreatment */
   
   /* USER CODE END USB_DEVICE_Init_PreTreatment */
   
   /* Init Device Library, add supported class and start the library. */
-  USBD_Init(&hUsbDeviceFS, &FS_Desc, DEVICE_FS);
+  //USBD_Init(&hUsbDeviceFS, &FS_Desc, DEVICE_FS);
 
-  USBD_RegisterClass(&hUsbDeviceFS, &USBD_CDC);
+  //USBD_RegisterClass(&hUsbDeviceFS, &USBD_CDC);
 
-  USBD_CDC_RegisterInterface(&hUsbDeviceFS, &USBD_Interface_fops_FS);
+  //USBD_CDC_RegisterInterface(&hUsbDeviceFS, &USBD_Interface_fops_FS);
 
-  USBD_Start(&hUsbDeviceFS);
+  //USBD_Start(&hUsbDeviceFS);
 
   /* USER CODE BEGIN USB_DEVICE_Init_PostTreatment */
   
