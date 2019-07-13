@@ -5,6 +5,35 @@
 #include "cmsis_os.h"
 #include "task_led.h"
 
+#define BTN_LEFT       GPIO_PIN_0
+#define BTN_RIGHT      GPIO_PIN_1
+#define BTN_SET_ORIGIN GPIO_PIN_2
+
+typedef struct DataStruct_
+{
+	float Qadj[4];
+	float Qorigin[4];
+	float Qprev[4];
+	float Q[4];
+	float Qrel[4];
+
+	float angles[2];
+	int   anglesInt[2];
+
+	float margin;
+	float coefSpeed;
+	float coefPos;
+
+	int doInit;
+} DataStruct;
+
+static void dataInit( DataStruct * d );
+static void dataPushQ( DataStruct * d, float * q );
+static void dataSetOrigin( DataStruct * d );
+
+static int btnState( int btn );
+//HAL_GPIO_ReadPin
+
 static void bno055Init( void );
 static void bno055_delay( uint32_t msec );
 static int8_t bno055_bus_read_i2c( uint8_t dev_addr, uint8_t reg_addr, uint8_t * reg_data, uint8_t qty );
@@ -35,6 +64,8 @@ static void quatCopy( float * qFrom, float * qTo );
 static float sqrtn( float a );
 static void quat2Mat( float * q, float * * R );
 static void quatRel( float * qa, float * qb, float * qr );
+static void quatMult( float * qa, float * qb, float * qr );
+static void quatRotateVector( float * q, float * v, float * vr );
 static void moveFloatToInt( float * fa, int * ia );
 static void moveResult( int * adj );
 
@@ -223,10 +254,52 @@ static void quatRel( float * qa, float * qb, float * qr )
 	qr[3] = a*h + b*g - c*f + d*e;
 }
 
+static void quatMult( float * qa, float * qb, float * qr )
+{
+	const float a =  qa[0];
+	const float b =  qa[1];
+	const float c =  qa[2];
+	const float d =  qa[3];
+
+	const float e =  qb[0];
+	const float f =  qb[1];
+	const float g =  qb[2];
+	const float h =  qb[3];
+
+	qr[0] = a*e - b*f - c*g - d*h;
+	qr[1] = b*e + a*f + c*h - d*g;
+	qr[2] = a*g - b*h + c*e + d*f;
+	qr[3] = a*h + b*g - c*f + d*e;
+}
+
+static void quatRotateVector( float * q, float * v, float * vr )
+{
+	float qv[4];
+	qv[0] = 0.0;
+	qv[1] = v[0];
+	qv[2] = v[1];
+	qv[3] = v[3];
+
+	quatMult( q, qv, qv );
+
+	float iq[4];
+	iq[0] =  q[0];
+	iq[1] = -q[1];
+	iq[2] = -q[2];
+	iq[3] = -q[3];
+
+	quatMult( qv, iq, qv );
+
+	vr[0] = qv[1];
+	vr[1] = qv[2];
+	vr[2] = qv[3];
+}
+
 static void moveFloatToInt( float * fa, int * ia )
 {
 	for ( int i=0; i<2; i++ )
 	{
+		ia[i] = 0;
 		if ( fa[i] >= 1.0f )
 		{
 			while ( fa[i] >= 1.0f )
@@ -253,6 +326,86 @@ static void moveResult( int * adj )
 		angInt[1] += adj[1];
 	osMutexRelease( mutexId );
 }
+
+
+static void dataInit( DataStruct * d )
+{
+	d->Qadj[0] = 1.0;
+	d->Qadj[1] = 0.0;
+	d->Qadj[2] = 0.0;
+	d->Qadj[3] = 0.0;
+
+	d->Qorigin[0] = 1.0;
+	d->Qorigin[1] = 0.0;
+	d->Qorigin[2] = 0.0;
+	d->Qorigin[3] = 0.0;
+
+	d->Qprev[0]   = 1.0;
+	d->Qprev[1]   = 0.0;
+	d->Qprev[2]   = 0.0;
+	d->Qprev[3]   = 0.0;
+
+	d->Q[0]       = 1.0;
+	d->Q[1]       = 0.0;
+	d->Q[2]       = 0.0;
+	d->Q[3]       = 0.0;
+
+	d->angles[0]  = 0.0;
+	d->angles[1]  = 0.0;
+
+	d->anglesInt[0] = 0;
+	d->anglesInt[1] = 0;
+
+	d->margin       = 3.1415 / 8.0;
+
+	d->coefSpeed    = 1600.0;
+	d->coefPos      = 100.0;
+
+	d->doInit = 1;
+}
+
+static void dataPushQ( DataStruct * d, float * q )
+{
+	quatCopy( q, d->Q );
+	if ( d->doInit )
+	{
+		d->doInit = 0;
+		quatCopy( d->Q, d->Qprev );
+		quatCopy( d->Q, d->Qorigin );
+		return;
+	}
+
+	int needSetOrigin = btnState( BTN_SET_ORIGIN );
+
+	quatRel( d->Qprev, d->Q, d->Qrel );
+	const float angZ = -2.0f * d->Qrel[3] * d->coefSpeed;
+	const float angX = -2.0f * d->Qrel[1] * d->coefSpeed;
+	d->angles[0] += angZ;
+	d->angles[1] += angX;
+	moveFloatToInt( d->angles, d->anglesInt );
+	moveResult( d->anglesInt );
+
+	quatCopy( d->Q, d->Qprev );
+}
+
+static void dataSetOrigin( DataStruct * d )
+{
+
+}
+
+static int btnState( int btn )
+{
+	GPIO_PinState state = HAL_GPIO_ReadPin( GPIOB, btn );
+	int res = ( state == GPIO_PIN_RESET ) ? 1 : 0;
+	return res;
+}
+
+
+
+
+
+
+
 
 static void bno055Init( void )
 {
