@@ -60,10 +60,10 @@ static void vTaskUsbIo( void * p )
 
 	for ( ;; )
 	{
-		imuHID.buttons = mouseHID.buttons;
+		imuHID.buttons = buttonStates();
+		imuHID.wheel   = mouseHID.wheel;
 		imuHID.x = 1;
 		imuHID.y = 0;
-		imuHID.wheel   = mouseHID.wheel;
 		if ( adjustMouse( &(imuHID.x), &(imuHID.y) ) )
 		{
 			USBD_HID_SendReport(&hUsbDeviceFS, (uint8_t *)&imuHID, sizeof(struct mouseHID_t));

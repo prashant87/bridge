@@ -6,8 +6,7 @@
 
 void taskImuInit( void );
 uint8_t adjustMouse( int8_t * x, int8_t * y );
-unsigned char leftButton( void );
-unsigned char rightButton( void );
+unsigned char buttonStates( void );
 
 
 #endif

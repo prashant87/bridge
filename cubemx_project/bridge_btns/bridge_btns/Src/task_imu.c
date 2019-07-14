@@ -124,15 +124,10 @@ uint8_t adjustMouse( int8_t * x, int8_t * y )
 	return res;
 }
 
-unsigned char leftButton( void )
+unsigned char buttonStates( void )
 {
-	unsigned char v = (btnState(BTN_LEFT)) ? 1 : 0;
-	return v;
-}
-
-unsigned char rightButton( void )
-{
-	unsigned char v = (btnState(BTN_RIGHT)) ? 1 : 0;
+	unsigned char v = ( (btnState(BTN_LEFT)) ? 1 : 0 ) ||
+			          ( (btnState(BTN_RIGHT)) ? 1 : 0 );
 	return v;
 }
 
