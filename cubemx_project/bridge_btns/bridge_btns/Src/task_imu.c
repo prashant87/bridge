@@ -5,6 +5,8 @@
 #include "cmsis_os.h"
 #include "task_led.h"
 
+#include "math.h"
+
 #define BTN_LEFT       GPIO_PIN_0
 #define BTN_RIGHT      GPIO_PIN_1
 #define BTN_SET_ORIGIN GPIO_PIN_2
@@ -19,6 +21,7 @@ typedef struct DataStruct_
 
 	float angles[2];
 	int   anglesInt[2];
+	unsigned char btn1, btn2;
 
 	float margin;
 	float coefSpeed;
@@ -27,9 +30,13 @@ typedef struct DataStruct_
 	int doInit;
 } DataStruct;
 
+DataStruct g_data;
+
 static void dataInit( DataStruct * d );
 static void dataPushQ( DataStruct * d, float * q );
 static void dataSetOrigin( DataStruct * d );
+static void dataComputeDisplacement( DataStruct * d );
+static void dataComputeVelocity( DataStruct * d );
 
 static int btnState( int btn );
 //HAL_GPIO_ReadPin
@@ -54,6 +61,8 @@ void taskImuInit( void )
 	bno055_inst.delay_msec = bno055_delay;
 	bno055_inst.dev_addr   = BNO055_I2C_ADDR1 << 1;
 
+	dataInit( &g_data );
+
 	mutexId = osMutexCreate( &mutex );
 	// Create reading thread.
 	osThreadCreate(osThread(imuTask), NULL);
@@ -69,62 +78,73 @@ static void quatRotateVector( float * q, float * v, float * vr );
 static void moveFloatToInt( float * fa, int * ia );
 static void moveResult( int * adj );
 
-static float angScale = 1600.0;
-static float angFloat[2] = { 0.0f, 0.0f };
-static int   angInt[2] = { 0, 0 };
+//static float angScale = 1600.0;
+//static float angFloat[2] = { 0.0f, 0.0f };
+//static int   angInt[2] = { 0, 0 };
 
 uint8_t adjustMouse( int8_t * x, int8_t * y )
 {
 	uint8_t res = 0;
 	osMutexWait( mutexId, osWaitForever );
-		if ( angInt[0] > 0 )
+		if ( g_data.anglesInt[0] > 0 )
 		{
 			int max_dx = 127 - (*x);
-			int dx = ( angInt[0] < max_dx ) ? angInt[0] : max_dx;
+			int dx = ( g_data.anglesInt[0] < max_dx ) ? g_data.anglesInt[0] : max_dx;
 			res = res + ( (dx != 0) ? 1 : 0 );
 			*x += dx;
-			angInt[0] -= dx;
+			g_data.anglesInt[0] -= dx;
 		}
-		else if ( angInt[0] < 0 )
+		else if ( g_data.anglesInt[0] < 0 )
 		{
 			int min_dx = -127 - (*x);
-			int dx = (angInt[0] > min_dx) ? angInt[0] : min_dx;
+			int dx = (g_data.anglesInt[0] > min_dx) ? g_data.anglesInt[0] : min_dx;
 			res = res + ( (dx != 0) ? 1 : 0 );
 			*x += dx;
-			angInt[0] -= dx;
+			g_data.anglesInt[0] -= dx;
 		}
 
-		if ( angInt[1] > 0 )
+		if ( g_data.anglesInt[1] > 0 )
 		{
 			int max_dy = 127 - (*y);
-			int dy = ( angInt[1] < max_dy ) ? angInt[1] : max_dy;
+			int dy = ( g_data.anglesInt[1] < max_dy ) ? g_data.anglesInt[1] : max_dy;
 			res = res + ( (dy != 0) ? 1 : 0 );
 			*y += dy;
-			angInt[1] -= dy;
+			g_data.anglesInt[1] -= dy;
 		}
-		else if ( angInt[1] < 0 )
+		else if ( g_data.anglesInt[1] < 0 )
 		{
 			int min_dy = -127 - (*y);
-			int dy = (angInt[1] > min_dy) ? angInt[1] : min_dy;
+			int dy = (g_data.anglesInt[1] > min_dy) ? g_data.anglesInt[1] : min_dy;
 			res = res + ( (dy != 0) ? 1 : 0 );
 			*y += dy;
-			angInt[1] -= dy;
+			g_data.anglesInt[1] -= dy;
 		}
 	osMutexRelease( mutexId );
 
 	return res;
 }
 
+unsigned char leftButton( void )
+{
+	unsigned char v = (btnState(BTN_LEFT)) ? 1 : 0;
+	return v;
+}
+
+unsigned char rightButton( void )
+{
+	unsigned char v = (btnState(BTN_RIGHT)) ? 1 : 0;
+	return v;
+}
 
 static void vTaskImu( void * p )
 {
-	static struct bno055_quaternion_t qq;
-	static float q[4], qPrev[4], qRel[4];
-	static float R[3][3];
-	static float axisX[3] = {1.0f, 0.0f, 0.0f};
-	static int   angIntBuf[2];
 	static int comres;
-	static int doInit = 1;
+	static struct bno055_quaternion_t qq;
+	static float q[4];//, qPrev[4], qRel[4];
+	//static float R[3][3];
+	//static float axisX[3] = {1.0f, 0.0f, 0.0f};
+	//static int   angIntBuf[2];
+	//static int doInit = 1;
 	// Allow IMU boot up.
 	vTaskDelay( 1000 );
 	// Initialize BNO055.
@@ -147,7 +167,9 @@ static void vTaskImu( void * p )
 		q[2] = qq.y;
 		q[3] = qq.z;
 		quatNormalize( q );
-		if ( doInit )
+
+
+		/*if ( doInit )
 		{
 			doInit = 0;
 			quatCopy( q, qPrev );
@@ -166,7 +188,9 @@ static void vTaskImu( void * p )
 		moveFloatToInt( angFloat, angIntBuf );
 		moveResult( angIntBuf );
 
-		quatCopy( q, qPrev );
+		quatCopy( q, qPrev );*/
+
+		dataPushQ( &g_data, q );
 	}
 }
 
@@ -322,8 +346,8 @@ static void moveFloatToInt( float * fa, int * ia )
 static void moveResult( int * adj )
 {
 	osMutexWait( mutexId, osWaitForever );
-		angInt[0] += adj[0];
-		angInt[1] += adj[1];
+		g_data.anglesInt[0] += adj[0];
+		g_data.anglesInt[1] += adj[1];
 	osMutexRelease( mutexId );
 }
 
@@ -356,6 +380,9 @@ static void dataInit( DataStruct * d )
 	d->anglesInt[0] = 0;
 	d->anglesInt[1] = 0;
 
+	d->btn1 = 0;
+	d->btn2 = 0;
+
 	d->margin       = 3.1415 / 8.0;
 
 	d->coefSpeed    = 1600.0;
@@ -376,12 +403,15 @@ static void dataPushQ( DataStruct * d, float * q )
 	}
 
 	int needSetOrigin = btnState( BTN_SET_ORIGIN );
+	if ( needSetOrigin )
+	{
+		dataSetOrigin( d );
+		return;
+	}
 
-	quatRel( d->Qprev, d->Q, d->Qrel );
-	const float angZ = -2.0f * d->Qrel[3] * d->coefSpeed;
-	const float angX = -2.0f * d->Qrel[1] * d->coefSpeed;
-	d->angles[0] += angZ;
-	d->angles[1] += angX;
+	dataComputeDisplacement( d );
+	dataComputeVelocity( d );
+
 	moveFloatToInt( d->angles, d->anglesInt );
 	moveResult( d->anglesInt );
 
@@ -390,7 +420,40 @@ static void dataPushQ( DataStruct * d, float * q )
 
 static void dataSetOrigin( DataStruct * d )
 {
+	quatCopy( d->Q, d->Qorigin );
+}
 
+static void dataComputeDisplacement( DataStruct * d )
+{
+	quatRel( d->Qprev, d->Q, d->Qrel );
+	const float angZ = -2.0f * d->Qrel[3] * d->coefSpeed;
+	const float angX = -2.0f * d->Qrel[1] * d->coefSpeed;
+	d->angles[0] += angZ;
+	d->angles[1] += angX;
+}
+
+static void dataComputeVelocity( DataStruct * d )
+{
+	quatRel( d->Qorigin, d->Q, d->Qrel );
+	float vy[3];
+	vy[0] = 0.0;
+	vy[1] = 1.0;
+	vy[2] = 0.0;
+	quatRotateVector( d->Qrel, vy, vy );
+	const float ang = atan2( -vy[0], vy[1] );
+
+	if ( ang > d->margin )
+	{
+		const float a = (ang - d->margin)*d->coefSpeed;
+		d->angles[0] += a;
+		return;
+	}
+
+	if ( ang < -d->margin )
+	{
+		const float a = (ang - d->margin)*d->coefSpeed;
+		d->angles[0] += a;
+	}
 }
 
 static int btnState( int btn )
